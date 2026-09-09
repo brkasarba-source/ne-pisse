@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#8E342B" />
+  <meta name="description" content="Bu akşam ne pişireceğinizi süre, mod ve kaloriye göre seçin." />
+  <link rel="manifest" href="manifest.webmanifest?v=22" />
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icons/icon-180.png" />
+  <link rel="stylesheet" href="style.css?v=25" />
+  <title>Ne Pişse?</title>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Ne Pişse ana sayfa"><span class="logo">N</span><span>Ne Pişse?</span></a>
+      <button class="icon-button" id="favoritesButton" aria-label="Favorileri göster">♡ <span id="favoriteCount">0</span></button>
+    </header>
+
+    <section class="hero">
+      <div>
+        <div class="eyebrow">AKŞAM MENÜSÜ ASİSTANI</div>
+        <h1>Bu akşam<br><em>ne pişse?</em></h1>
+      </div>
+      <p>Süre, kalori ve malzemeler doğrulanan tarif ölçülerine göre gösterilir.</p>
+    </section>
+
+    <section class="controls" aria-label="Yemek tercihleri">
+      <div class="control-group">
+        <label>Kişi sayısı</label>
+        <div class="stepper"><button type="button" id="minus" aria-label="Kişi azalt">−</button><strong id="people">2</strong><button type="button" id="plus" aria-label="Kişi artır">+</button></div>
+      </div>
+      <div class="control-group grow">
+        <label for="time">Ne kadar vaktiniz var?</label>
+        <select id="time"><option value="Infinity" selected>Süre sınırı yok</option><option value="15">15 dakikaya kadar</option><option value="30">30 dakikaya kadar</option><option value="60">1 saate kadar</option><option value="90">1,5 saate kadar</option><option value="120">2 saate kadar</option><option value="240">4 saate kadar</option></select>
+      </div>
+      <div class="control-group full">
+        <label>Bugünkü modunuz</label>
+        <div class="chips" id="modes">
+          <button data-mode="Tümü" class="active">Tümü</button><button data-mode="Hafif">Hafif</button><button data-mode="Doyurucu">Doyurucu</button><button data-mode="Ev Yemeği">Ev Yemeği</button><button data-mode="Fast Food / Kaçamak">Kaçamak</button><button data-mode="Dünya Mutfağı">Dünya Mutfağı</button><button data-mode="Kahvaltı">Kahvaltı</button>
+        </div>
+      </div>
+      <div class="control-group full calorie-row">
+        <div><label for="calorie">Yemeğin toplam kalorisi</label><span>Kişi başı 1 kaynak porsiyonu · eşlikçiler hariç</span></div>
+        <select id="calorie"><option value="any" selected>Kalori fark etmez</option><option value="500">En fazla 500 kcal</option><option value="700">En fazla 700 kcal</option><option value="900">En fazla 900 kcal</option><option value="1200">En fazla 1.200 kcal</option><option value="1500">En fazla 1.500 kcal</option><option value="2000">En fazla 2.000 kcal</option><option value="over2000">En az 2.000 kcal</option></select>
+      </div>
+    </section>
+
+    <section class="result-wrap">
+      <div class="wheel" id="wheel" aria-hidden="true"><span>🍽️</span></div>
+      <button class="spin" id="spin"><span>Bu akşamı seç</span><small>Rastgele yemek getir</small></button>
+      <div class="status" id="status" role="status">Yemekler hazırlanıyor</div>
+      <div id="timeExclusions" class="time-exclusions" hidden><span id="timeExclusionText"></span><button id="clearTime" type="button">Süre sınırını kaldır</button></div>
+      <button id="resetSeen" type="button" hidden>Gösterilenleri yeniden dahil et</button>
+    </section>
+
+    <section class="meal-card hidden" id="mealCard" aria-live="polite">
+      <div class="meal-top">
+        <div><div class="eyebrow" id="mealMode"></div><h2 id="mealName"></h2><span class="subcategory" id="mealSubcategory"></span></div>
+        <div class="card-tools">
+          <button type="button" class="heart" id="heart" aria-label="Favoriye ekle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.7a5.5 5.5 0 0 0-7.8 0L12 5.8l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.4 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button>
+          <button type="button" class="share" id="share" aria-label="Menü kartını paylaş"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7.5 7.5 12 3l4.5 4.5M5 11v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8"/></svg></button>
+        </div>
+      </div>
+      <p class="menu" id="mealMenu"></p>
+      <div id="sourceActions" class="source-actions" hidden>
+        <a id="sourceLink" class="source-link" rel="external">Kaynak tarifi aç ↗</a>
+        <button type="button" id="copySource" class="copy-source">Bağlantıyı kopyala</button>
+      </div>
+      <p id="filterWarning" class="audit-note" hidden>Bu kart güncel filtrelere uymuyor. Yeni yemek seçebilirsiniz.</p>
+      <div class="metrics">
+        <div><strong id="mealTime"></strong><span>Kaynak tarif süresi</span></div><div><strong id="perCal"></strong><span>Kaynak porsiyonu</span></div><div><strong id="totalCal"></strong><span>Seçilen kişi sayısı için</span></div>
+      </div>
+      <p id="portionNote" class="fine-print"></p>
+      <section id="menuBuilder" class="menu-builder" hidden>
+        <div class="menu-builder-head"><div><h3>Bu yemekle menü oluştur</h3><p>Kaynaklarda önerilen ve denge kontrolünden geçen eşlikçiler.</p></div><button type="button" id="buildMenu">Menü oluştur</button></div>
+        <div id="menuSuggestions" class="menu-suggestions" hidden></div>
+      </section>
+      <div class="ingredients"><h3>Malzeme kontrol listesi</h3><p id="ingredientsNote"></p><ul id="ingredients"></ul></div>
+      <div class="actions"><button id="ate">✓ Bunu yedik</button><button id="again">Başka yemek</button></div>
+    </section>
+    <section class="history">
+      <div><h2>Yakın zamanda yedikleriniz</h2><p>Aynı yemek kısa sürede tekrar çıkmaz.</p></div>
+      <div id="historyList" class="history-list"><span class="empty">Henüz kayıt yok</span></div>
+    </section>
+  </main>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="catalog.js?v=25"></script>
+  <script src="app.js?v=25"></script>
+</body>
+</html>
