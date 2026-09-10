@@ -12,14 +12,26 @@ const meal = id => meals.find(m => m.id === 'meal-'+id);
 const tests = [];
 function test(name, run) { tests.push({name,run}); }
 test('All 238 legacy rows are accounted for; no duplicate active IDs or names', () => {
-  assert.equal(meals.length,233); assert.equal(Object.keys(mealAliases).length,4);
-  assert.equal(meals.length+Object.keys(mealAliases).length+1,238);
-  assert.equal(new Set(meals.map(m => m.id)).size,233);
-  assert.equal(new Set(meals.map(m => m.name.toLocaleLowerCase('tr-TR'))).size,233);
-  assert.equal(meals.filter(m => m.status === 'sourced').length,135);
-  assert.equal(meals.filter(m => m.status === 'idea').length,98);
+  const legacy = meals.filter(m => m.id.startsWith('meal-'));
+  assert.equal(legacy.length,233); assert.equal(Object.keys(mealAliases).length,4);
+  assert.equal(legacy.length+Object.keys(mealAliases).length+1,238);
+  assert.equal(new Set(meals.map(m => m.id)).size,meals.length);
+  assert.equal(new Set(meals.map(m => m.name.toLocaleLowerCase('tr-TR'))).size,meals.length);
+  assert.equal(meals.filter(m => m.status === 'sourced').length,139);
+  assert.equal(meals.filter(m => m.status === 'idea').length,96);
   assert(!meal(190));
   Object.values(mealAliases).forEach(id => assert(meals.some(m => m.id === id)));
+});
+test('Breakfast additions and desserts preserve portions and cooling exclusions', () => {
+  assert.equal(meal(218).yieldPeople,1); assert.equal(meal(218).cal,null);
+  assert.equal(meal(220).yieldPeople,2); assert.equal(meal(220).time,8);
+  assert(html.includes('data-mode="Tatlı"'));
+  const desserts=meals.filter(m=>m.mode==='Tatlı'); assert.equal(desserts.length,2);
+  for(const m of desserts) {
+    assert.equal(m.time,null); assert(m.extraPrep); assert(m.waitLabel);
+    assert(matchesMeal(m,{mode:'Tatlı'}));
+    assert(!matchesMeal(m,{mode:'Tatlı',maxTime:240}));
+  }
 });
 test('Unknown data is null, never an inherited category estimate or placeholder', () => {
   for (const m of meals) {
@@ -180,6 +192,8 @@ test('Scaled ingredient amounts use practical kitchen measures instead of raw ra
   const render=(amount,unit='adet',name='soğan')=>s.eval(`ingredientText(${JSON.stringify({amount,unit,name})},{yieldPeople:1},1)`);
   assert.equal(render(0.5),'1 adet soğan al · yaklaşık yarısını kullan');
   assert.equal(render(2/3,'diş','sarımsak'),'1 diş sarımsak al · yaklaşık 2/3’ünü kullan');
+  assert.equal(render(1/3,'diş','sarımsak'),'1 diş sarımsak al · yaklaşık 1/3’ünü kullan');
+  assert.equal(render(1/6,'adet','soğan'),'1 adet soğan al · yaklaşık %17’ini kullan');
   assert.equal(render(2/3,'yemek kaşığı','sıvı yağ'),'2 çay kaşığı sıvı yağ');
   assert.equal(render(2+2/3,'yemek kaşığı','toz tarhana'),'2 yemek kaşığı + 2 çay kaşığı toz tarhana');
   assert.equal(render(2/3,'çay kaşığı','tuz'),'yaklaşık 3/4 çay kaşığı tuz');

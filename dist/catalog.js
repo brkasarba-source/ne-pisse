@@ -580,23 +580,91 @@ const meals = [
     "note": "Hamur en az 10 dakika dinleniyor. Bu beklemenin başlıktaki hazırlık süresine dahil olduğu net değil; süre sınırına göre önerilmez. Sos için verilen yarım fincanın mililitre karşılığı kaynakta belirtilmiyor.",
     "cal": null,
     "ingredients": [
-      {"amount":1,"unit":"adet","name":"yumurta (hamur için)"},
-      {"amount":3,"unit":"su bardağı","name":"un (hamur için)"},
-      {"amount":1,"unit":"tatlı kaşığı","name":"tuz (hamur için)"},
-      {"amount":1,"unit":"su bardağı","name":"su (hamura kontrollü eklenecek)"},
-      {"amount":1,"unit":"adet","name":"kuru soğan (iç harç için)"},
-      {"amount":300,"unit":"gram","name":"kıyma"},
-      {"amount":1,"unit":"tatlı kaşığı","name":"tuz (iç harç için)"},
-      {"amount":1,"unit":"çay kaşığı","name":"karabiber"},
-      {"amount":1,"unit":"çay kaşığı","name":"pul biber"},
-      {"amount":1,"unit":"tatlı kaşığı","name":"biber salçası (iç harç için)"},
-      {"amount":2,"unit":"su bardağı","name":"yoğurt (üzeri için)"},
-      {"amount":2,"unit":"diş","name":"sarımsak"},
-      {"amount":0.5,"unit":"fincan","name":"sıvı yağ (sos için)"},
-      {"amount":0.5,"unit":"yemek kaşığı","name":"tereyağı"},
-      {"amount":1,"unit":"tatlı kaşığı","name":"biber salçası (sos için)"},
-      {"amount":1,"unit":"tatlı kaşığı","name":"toz biber"},
-      {"amount":1,"unit":"çay kaşığı","name":"kuru nane"},
+      {
+        "amount": 1,
+        "unit": "adet",
+        "name": "yumurta (hamur için)"
+      },
+      {
+        "amount": 3,
+        "unit": "su bardağı",
+        "name": "un (hamur için)"
+      },
+      {
+        "amount": 1,
+        "unit": "tatlı kaşığı",
+        "name": "tuz (hamur için)"
+      },
+      {
+        "amount": 1,
+        "unit": "su bardağı",
+        "name": "su (hamura kontrollü eklenecek)"
+      },
+      {
+        "amount": 1,
+        "unit": "adet",
+        "name": "kuru soğan (iç harç için)"
+      },
+      {
+        "amount": 300,
+        "unit": "gram",
+        "name": "kıyma"
+      },
+      {
+        "amount": 1,
+        "unit": "tatlı kaşığı",
+        "name": "tuz (iç harç için)"
+      },
+      {
+        "amount": 1,
+        "unit": "çay kaşığı",
+        "name": "karabiber"
+      },
+      {
+        "amount": 1,
+        "unit": "çay kaşığı",
+        "name": "pul biber"
+      },
+      {
+        "amount": 1,
+        "unit": "tatlı kaşığı",
+        "name": "biber salçası (iç harç için)"
+      },
+      {
+        "amount": 2,
+        "unit": "su bardağı",
+        "name": "yoğurt (üzeri için)"
+      },
+      {
+        "amount": 2,
+        "unit": "diş",
+        "name": "sarımsak"
+      },
+      {
+        "amount": 0.5,
+        "unit": "fincan",
+        "name": "sıvı yağ (sos için)"
+      },
+      {
+        "amount": 0.5,
+        "unit": "yemek kaşığı",
+        "name": "tereyağı"
+      },
+      {
+        "amount": 1,
+        "unit": "tatlı kaşığı",
+        "name": "biber salçası (sos için)"
+      },
+      {
+        "amount": 1,
+        "unit": "tatlı kaşığı",
+        "name": "toz biber"
+      },
+      {
+        "amount": 1,
+        "unit": "çay kaşığı",
+        "name": "kuru nane"
+      },
       "mantıyı haşlamak için tuzlu su (kaynak miktar belirtmiyor)"
     ],
     "source": "https://yemek.com/tarif/manti-3/",
@@ -618,22 +686,89 @@ const meals = [
     "note": "Kaynak 10 adet verir; kişi sayısına çevirmek için alışveriş hesabında açıkça kişi başı 2 lahmacun varsayılır. Süre 10 adetlik tarif içindir; fırın kapasitesi ve parti sayısı süreyi uzatabilir.",
     "cal": null,
     "ingredients": [
-      {"amount":2,"unit":"su bardağı","name":"ılık su (hamur için)"},
-      {"amount":1,"unit":"tatlı kaşığı","name":"tuz (hamur için)"},
-      {"amount":[4.5,5],"unit":"su bardağı","name":"un (hamura kontrollü eklenecek)"},
-      {"amount":2,"unit":"yemek kaşığı","name":"zeytinyağı (hamur için)"},
-      {"amount":400,"unit":"gram","name":"kıyma"},
-      {"amount":2,"unit":"adet","name":"domates"},
-      {"amount":2,"unit":"adet","name":"kapya biber"},
-      {"amount":1,"unit":"adet","name":"yeşil biber"},
-      {"amount":1,"unit":"tatlı kaşığı","name":"tepeleme salça"},
-      {"amount":3,"unit":"diş","name":"sarımsak"},
-      {"amount":1,"unit":"adet","name":"soğan"},
-      {"amount":2,"unit":"yemek kaşığı","name":"zeytinyağı (iç harç için)"},
-      {"amount":1,"unit":"çay kaşığı","name":"tuz (iç harç için)"},
-      {"amount":1,"unit":"çay kaşığı","name":"karabiber"},
-      {"amount":1,"unit":"çay kaşığı","name":"toz biber"},
-      {"amount":0.5,"unit":"demet","name":"maydanoz"}
+      {
+        "amount": 2,
+        "unit": "su bardağı",
+        "name": "ılık su (hamur için)"
+      },
+      {
+        "amount": 1,
+        "unit": "tatlı kaşığı",
+        "name": "tuz (hamur için)"
+      },
+      {
+        "amount": [
+          4.5,
+          5
+        ],
+        "unit": "su bardağı",
+        "name": "un (hamura kontrollü eklenecek)"
+      },
+      {
+        "amount": 2,
+        "unit": "yemek kaşığı",
+        "name": "zeytinyağı (hamur için)"
+      },
+      {
+        "amount": 400,
+        "unit": "gram",
+        "name": "kıyma"
+      },
+      {
+        "amount": 2,
+        "unit": "adet",
+        "name": "domates"
+      },
+      {
+        "amount": 2,
+        "unit": "adet",
+        "name": "kapya biber"
+      },
+      {
+        "amount": 1,
+        "unit": "adet",
+        "name": "yeşil biber"
+      },
+      {
+        "amount": 1,
+        "unit": "tatlı kaşığı",
+        "name": "tepeleme salça"
+      },
+      {
+        "amount": 3,
+        "unit": "diş",
+        "name": "sarımsak"
+      },
+      {
+        "amount": 1,
+        "unit": "adet",
+        "name": "soğan"
+      },
+      {
+        "amount": 2,
+        "unit": "yemek kaşığı",
+        "name": "zeytinyağı (iç harç için)"
+      },
+      {
+        "amount": 1,
+        "unit": "çay kaşığı",
+        "name": "tuz (iç harç için)"
+      },
+      {
+        "amount": 1,
+        "unit": "çay kaşığı",
+        "name": "karabiber"
+      },
+      {
+        "amount": 1,
+        "unit": "çay kaşığı",
+        "name": "toz biber"
+      },
+      {
+        "amount": 0.5,
+        "unit": "demet",
+        "name": "maydanoz"
+      }
     ],
     "source": "https://yemek.com/tarif/lokanta-usulu-lahmacun/",
     "checkedAt": "2026-09-07"
@@ -11947,18 +12082,40 @@ const meals = [
     "name": "Sahanda Yumurta",
     "mode": "Kahvaltı",
     "subcategory": "Yumurtalı",
-    "status": "idea",
-    "variant": null,
-    "time": null,
-    "prep": null,
-    "cook": null,
-    "cal": null,
-    "ingredients": [],
-    "source": null,
-    "yieldPeople": null,
-    "yieldLabel": null,
+    "status": "sourced",
+    "variant": "Sahanda Yumurta",
+    "prep": 3,
+    "cook": 3,
+    "time": 6,
+    "yieldPeople": 1,
+    "yieldLabel": "1 kişilik",
     "extraPrep": false,
-    "note": "Bu yemek yalnızca fikir olarak listeleniyor. Süre, kalori ve malzemeleri henüz doğrulanmadı."
+    "waitLabel": null,
+    "cal": null,
+    "ingredients": [
+      {
+        "amount": 1,
+        "unit": "yemek kaşığı",
+        "name": "tereyağı"
+      },
+      {
+        "amount": 1,
+        "unit": "tutam",
+        "name": "tuz"
+      },
+      {
+        "amount": 2,
+        "unit": "adet",
+        "name": "yumurta"
+      },
+      {
+        "amount": 1,
+        "unit": "tutam",
+        "name": "pul biber (isteğe bağlı)"
+      }
+    ],
+    "source": "https://yemek.com/tarif/sahanda-yumurta/",
+    "note": "Süre kaynak porsiyonu içindir; daha büyük miktarlar için aynı süre garanti edilmez. Kaynakta porsiyon kalorisi belirtilmemiştir."
   },
   {
     "id": "meal-219",
@@ -11983,18 +12140,45 @@ const meals = [
     "name": "Omlet",
     "mode": "Kahvaltı",
     "subcategory": "Yumurtalı",
-    "status": "idea",
-    "variant": null,
-    "time": null,
-    "prep": null,
-    "cook": null,
-    "cal": null,
-    "ingredients": [],
-    "source": null,
-    "yieldPeople": null,
-    "yieldLabel": null,
+    "status": "sourced",
+    "variant": "Omlet",
+    "prep": 5,
+    "cook": 3,
+    "time": 8,
+    "yieldPeople": 2,
+    "yieldLabel": "2 kişilik",
     "extraPrep": false,
-    "note": "Bu yemek yalnızca fikir olarak listeleniyor. Süre, kalori ve malzemeleri henüz doğrulanmadı."
+    "waitLabel": null,
+    "cal": 206,
+    "ingredients": [
+      {
+        "amount": 4,
+        "unit": "adet",
+        "name": "yumurta"
+      },
+      {
+        "amount": 0.5,
+        "unit": "çay kaşığı",
+        "name": "tuz"
+      },
+      {
+        "amount": 0.5,
+        "unit": "çay kaşığı",
+        "name": "taze çekilmiş karabiber"
+      },
+      {
+        "amount": 1,
+        "unit": "yemek kaşığı",
+        "name": "tereyağı"
+      },
+      {
+        "amount": 1,
+        "unit": "yemek kaşığı",
+        "name": "zeytinyağı"
+      }
+    ],
+    "source": "https://yemek.com/tarif/omlet/",
+    "note": "Süre kaynak porsiyonu içindir; daha büyük miktarlar için aynı süre garanti edilmez. Kalori kaynak porsiyonuna aittir; bağımsız hesaplama değildir."
   },
   {
     "id": "meal-221",
@@ -12283,6 +12467,116 @@ const meals = [
     "yieldLabel": null,
     "extraPrep": false,
     "note": "Bu yemek yalnızca fikir olarak listeleniyor. Süre, kalori ve malzemeleri henüz doğrulanmadı."
+  },
+  {
+    "id": "dessert-1",
+    "name": "Muhallebi",
+    "mode": "Tatlı",
+    "subcategory": "Sütlü",
+    "status": "sourced",
+    "variant": "Muhallebi",
+    "prep": 5,
+    "cook": 15,
+    "time": null,
+    "yieldPeople": 4,
+    "yieldLabel": "4 kişilik",
+    "extraPrep": true,
+    "waitLabel": "Soğutma süresi kaynakta belirtilmemiş",
+    "cal": 415,
+    "ingredients": [
+      {
+        "amount": 5,
+        "unit": "su bardağı",
+        "name": "süt"
+      },
+      {
+        "amount": 1,
+        "unit": "su bardağı",
+        "name": "toz şeker"
+      },
+      {
+        "amount": 3,
+        "unit": "yemek kaşığı",
+        "name": "buğday nişastası (elenmiş)"
+      },
+      {
+        "amount": 1,
+        "unit": "paket",
+        "name": "vanilin"
+      },
+      {
+        "amount": 0.5,
+        "unit": "çay bardağı",
+        "name": "un (elenmiş)"
+      },
+      {
+        "amount": 1,
+        "unit": "tatlı kaşığı",
+        "name": "tereyağı"
+      },
+      {
+        "amount": 1,
+        "unit": "adet",
+        "name": "muz (servis için)"
+      },
+      {
+        "amount": 1,
+        "unit": "yemek kaşığı",
+        "name": "toz Antep fıstığı (servis için)"
+      }
+    ],
+    "source": "https://yemek.com/tarif/muhallebi/",
+    "note": "Servis malzemeleri kaynak listesine dahildir. Kalori kaynak porsiyonuna aittir; bağımsız hesaplama değildir."
+  },
+  {
+    "id": "dessert-2",
+    "name": "Sütlü İrmik Tatlısı",
+    "mode": "Tatlı",
+    "subcategory": "Sütlü",
+    "status": "sourced",
+    "variant": "Sütlü İrmik Tatlısı",
+    "prep": 10,
+    "cook": 20,
+    "time": null,
+    "yieldPeople": 6,
+    "yieldLabel": "6 kişilik",
+    "extraPrep": true,
+    "waitLabel": "İlk soğutma + en az 4 saat buzdolabı beklemesi; ilk soğutmanın süresi belirsiz",
+    "cal": 254,
+    "ingredients": [
+      {
+        "amount": 1,
+        "unit": "litre",
+        "name": "süt"
+      },
+      {
+        "amount": 9,
+        "unit": "yemek kaşığı",
+        "name": "irmik"
+      },
+      {
+        "amount": 10,
+        "unit": "yemek kaşığı",
+        "name": "toz şeker"
+      },
+      {
+        "amount": 1,
+        "unit": "paket",
+        "name": "vanilin"
+      },
+      {
+        "amount": 1,
+        "unit": "yemek kaşığı",
+        "name": "tereyağı"
+      },
+      {
+        "amount": 1,
+        "unit": "çay kaşığı",
+        "name": "tarçın (servis için)"
+      }
+    ],
+    "source": "https://yemek.com/tarif/sutlu-irmik-tatlisi/",
+    "note": "Kalori kaynak porsiyonuna aittir; bağımsız hesaplama değildir. İsteğe bağlı, miktarı verilmeyen vişne listeye dahil değildir."
   }
 ];
 

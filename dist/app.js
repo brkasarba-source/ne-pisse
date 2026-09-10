@@ -80,7 +80,7 @@ function practicalAmount(value, unit, name) {
       const teaspoons = Math.round((value - whole) * 3 * 2) / 2;
       return `${whole} ${unit} + ${friendlyNumber(teaspoons)} çay kaşığı ${name}`;
     }
-    return `${friendlyNumber(value * 3)} çay kaşığı ${name}`;
+    return practicalAmount(value * 3, 'çay kaşığı', name);
   }
   if (unit.endsWith('tatlı kaşığı')) {
     if (Math.abs(value - Math.round(value)) < 0.011) return `${Math.round(value)} ${unit} ${name}`;
@@ -123,8 +123,9 @@ function practicalAmount(value, unit, name) {
     const shopping = Math.ceil(value);
     let usage;
     if (value < 1) {
-      const quarter = Math.max(.25, Math.min(1, Math.round(value*4)/4));
-      usage = quarter === .25 ? 'dörtte birini' : quarter === .5 ? 'yarısını' : quarter === .75 ? 'dörtte üçünü' : 'tamamını';
+      const fractions = [[.25,'dörtte birini'],[1/3,'1/3’ünü'],[.5,'yarısını'],[2/3,'2/3’ünü'],[.75,'dörtte üçünü'],[1,'tamamını']];
+      const nearest = fractions.reduce((best, candidate) => Math.abs(candidate[0]-value) < Math.abs(best[0]-value) ? candidate : best);
+      usage = value < .25 ? `%${Math.max(1, Math.round(value*100))}’ini` : nearest[1];
     }
     else {
       const rounded = Math.round(value * 4) / 4, whole = Math.floor(rounded), remainder = rounded - whole;
@@ -139,7 +140,12 @@ function practicalAmount(value, unit, name) {
     const usage = value < 1 ? `yaklaşık %${percent}'sini` : `${whole} ${unit} ve kalan paketin yaklaşık %${percent}'sini`;
     return `${shopping} ${unit} ${name} al · ${usage} kullan`;
   }
-  return `${friendlyNumber(value)} ${unit} ${name}`;
+  const formatted = friendlyNumber(value);
+  if (/\d+,\d{2,}/.test(formatted)) {
+    const whole = Math.floor(value), percent = Math.round((value-whole)*100);
+    return `yaklaşık ${whole ? `${whole} ${unit} + ` : ''}1 ${unit} ${name} ölçüsünün %${percent} kadarı`;
+  }
+  return `${formatted} ${unit} ${name}`;
 }
 function ingredientText(item, m, count=people) {
   if (typeof item === 'string') return item;
