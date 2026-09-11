@@ -12122,18 +12122,60 @@ const meals = [
     "name": "Çılbır",
     "mode": "Kahvaltı",
     "subcategory": "Yumurtalı",
-    "status": "idea",
-    "variant": null,
-    "time": null,
-    "prep": null,
-    "cook": null,
-    "cal": null,
-    "ingredients": [],
-    "source": null,
-    "yieldPeople": null,
-    "yieldLabel": null,
+    "status": "sourced",
+    "variant": "Çılbır",
+    "prep": 15,
+    "cook": 10,
+    "time": 25,
+    "yieldPeople": 2,
+    "yieldLabel": "2 kişilik",
     "extraPrep": false,
-    "note": "Bu yemek yalnızca fikir olarak listeleniyor. Süre, kalori ve malzemeleri henüz doğrulanmadı."
+    "waitLabel": null,
+    "cal": null,
+    "ingredients": [
+      {
+        "amount": 200,
+        "unit": "mililitre",
+        "name": "süzme yoğurt"
+      },
+      {
+        "amount": 2,
+        "unit": "adet",
+        "name": "yumurta"
+      },
+      {
+        "amount": 50,
+        "unit": "gram",
+        "name": "tereyağı"
+      },
+      {
+        "amount": 1,
+        "unit": "diş",
+        "name": "sarımsak"
+      },
+      {
+        "amount": 0.5,
+        "unit": "çay kaşığı",
+        "name": "tuz"
+      },
+      {
+        "amount": 1,
+        "unit": "çay kaşığı",
+        "name": "pul biber"
+      },
+      {
+        "amount": 1,
+        "unit": "çay kaşığı",
+        "name": "kırmızı tatlı toz biber"
+      },
+      {
+        "amount": 1,
+        "unit": "çay kaşığı",
+        "name": "nane"
+      }
+    ],
+    "source": "https://yemek.com/tarif/cilbir-6/",
+    "note": "Süre kaynak porsiyonu içindir; daha büyük miktarlar için aynı süre garanti edilmez. Kaynakta porsiyon kalorisi belirtilmemiştir."
   },
   {
     "id": "meal-220",
@@ -12185,36 +12227,95 @@ const meals = [
     "name": "Patatesli Yumurta",
     "mode": "Kahvaltı",
     "subcategory": "Yumurtalı",
-    "status": "idea",
-    "variant": null,
-    "time": null,
-    "prep": null,
-    "cook": null,
-    "cal": null,
-    "ingredients": [],
-    "source": null,
-    "yieldPeople": null,
-    "yieldLabel": null,
+    "status": "sourced",
+    "variant": "Patatesli Yumurta",
+    "prep": 20,
+    "cook": 20,
+    "time": 40,
+    "yieldPeople": 2,
+    "yieldLabel": "2 kişilik",
     "extraPrep": false,
-    "note": "Bu yemek yalnızca fikir olarak listeleniyor. Süre, kalori ve malzemeleri henüz doğrulanmadı."
+    "waitLabel": null,
+    "cal": 248,
+    "ingredients": [
+      {
+        "amount": 3,
+        "unit": "yemek kaşığı",
+        "name": "zeytinyağı"
+      },
+      {
+        "amount": 3,
+        "unit": "adet",
+        "name": "orta boy patates"
+      },
+      {
+        "amount": 2,
+        "unit": "adet",
+        "name": "yumurta"
+      },
+      {
+        "amount": 0.5,
+        "unit": "çay kaşığı",
+        "name": "tuz"
+      },
+      {
+        "amount": 0.25,
+        "unit": "çay kaşığı",
+        "name": "taze çekilmiş tane karabiber"
+      },
+      {
+        "amount": 0.25,
+        "unit": "demet",
+        "name": "maydanoz"
+      }
+    ],
+    "source": "https://yemek.com/tarif/patatesli-yumurta/",
+    "note": "Süre kaynak porsiyonu içindir; daha büyük miktarlar için aynı süre garanti edilmez. Kalori kaynak porsiyonuna aittir; bağımsız hesaplama değildir."
   },
   {
     "id": "meal-222",
     "name": "Mantarlı Omlet",
     "mode": "Kahvaltı",
     "subcategory": "Yumurtalı",
-    "status": "idea",
-    "variant": null,
-    "time": null,
-    "prep": null,
-    "cook": null,
-    "cal": null,
-    "ingredients": [],
-    "source": null,
-    "yieldPeople": null,
-    "yieldLabel": null,
+    "status": "sourced",
+    "variant": "Mantarlı Omlet",
+    "prep": 10,
+    "cook": 15,
+    "time": 25,
+    "yieldPeople": 2,
+    "yieldLabel": "2 kişilik",
     "extraPrep": false,
-    "note": "Bu yemek yalnızca fikir olarak listeleniyor. Süre, kalori ve malzemeleri henüz doğrulanmadı."
+    "waitLabel": null,
+    "cal": null,
+    "ingredients": [
+      {
+        "amount": 2,
+        "unit": "adet",
+        "name": "yumurta"
+      },
+      {
+        "amount": 10,
+        "unit": "adet",
+        "name": "kültür mantarı"
+      },
+      {
+        "amount": 2,
+        "unit": "yemek kaşığı",
+        "name": "süt"
+      },
+      {
+        "amount": 1,
+        "unit": "yemek kaşığı",
+        "name": "tereyağı"
+      },
+      {
+        "amount": 0.5,
+        "unit": "çay kaşığı",
+        "name": "tuz"
+      }
+    ],
+    "source": "https://yemek.com/tarif/mantarli-omlet/",
+    "note": "Süre kaynak porsiyonu içindir; daha büyük miktarlar için aynı süre garanti edilmez. Kaynakta porsiyon kalorisi belirtilmemiştir."
   },
   {
     "id": "meal-223",
@@ -12419,18 +12520,50 @@ const meals = [
     "name": "Yulaf Lapası",
     "mode": "Kahvaltı",
     "subcategory": "Tatlı Kahvaltı",
-    "status": "idea",
-    "variant": null,
-    "time": null,
-    "prep": null,
-    "cook": null,
-    "cal": null,
-    "ingredients": [],
-    "source": null,
-    "yieldPeople": null,
-    "yieldLabel": null,
+    "status": "sourced",
+    "variant": "Yulaf Lapası",
+    "prep": 5,
+    "cook": 5,
+    "time": 10,
+    "yieldPeople": 1,
+    "yieldLabel": "1 kişilik",
     "extraPrep": false,
-    "note": "Bu yemek yalnızca fikir olarak listeleniyor. Süre, kalori ve malzemeleri henüz doğrulanmadı."
+    "waitLabel": null,
+    "cal": 287,
+    "ingredients": [
+      {
+        "amount": 4,
+        "unit": "yemek kaşığı",
+        "name": "yulaf ezmesi"
+      },
+      {
+        "amount": 1,
+        "unit": "su bardağı",
+        "name": "süt"
+      },
+      {
+        "amount": 1,
+        "unit": "çay bardağı",
+        "name": "su"
+      },
+      {
+        "amount": 5,
+        "unit": "adet",
+        "name": "çiğ badem"
+      },
+      {
+        "amount": 1,
+        "unit": "çay kaşığı",
+        "name": "tarçın"
+      },
+      {
+        "amount": 1,
+        "unit": "kase",
+        "name": "dilediğiniz meyve çeşitleri (üzeri için)"
+      }
+    ],
+    "source": "https://yemek.com/tarif/yulaf-lapasi-7/",
+    "note": "Süre kaynak porsiyonu içindir; daha büyük miktarlar için aynı süre garanti edilmez. Kalori kaynak porsiyonuna aittir; bağımsız hesaplama değildir."
   },
   {
     "id": "meal-236",

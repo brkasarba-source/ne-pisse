@@ -17,14 +17,18 @@ test('All 238 legacy rows are accounted for; no duplicate active IDs or names', 
   assert.equal(legacy.length+Object.keys(mealAliases).length+1,238);
   assert.equal(new Set(meals.map(m => m.id)).size,meals.length);
   assert.equal(new Set(meals.map(m => m.name.toLocaleLowerCase('tr-TR'))).size,meals.length);
-  assert.equal(meals.filter(m => m.status === 'sourced').length,139);
-  assert.equal(meals.filter(m => m.status === 'idea').length,96);
+  assert.equal(meals.filter(m => m.status === 'sourced').length,143);
+  assert.equal(meals.filter(m => m.status === 'idea').length,92);
   assert(!meal(190));
   Object.values(mealAliases).forEach(id => assert(meals.some(m => m.id === id)));
 });
 test('Breakfast additions and desserts preserve portions and cooling exclusions', () => {
   assert.equal(meal(218).yieldPeople,1); assert.equal(meal(218).cal,null);
   assert.equal(meal(220).yieldPeople,2); assert.equal(meal(220).time,8);
+  assert.equal(meal(219).status,'sourced'); assert.equal(meal(219).yieldPeople,2); assert.equal(meal(219).time,25); assert.equal(meal(219).cal,null);
+  assert.equal(meal(221).status,'sourced'); assert.equal(meal(221).cal,248); assert.equal(meal(221).time,40);
+  assert.equal(meal(222).status,'sourced'); assert.equal(meal(222).yieldPeople,2); assert.equal(meal(222).time,25);
+  assert.equal(meal(235).status,'sourced'); assert.equal(meal(235).yieldPeople,1); assert.equal(meal(235).cal,287);
   assert(html.includes('data-mode="Tatlı"'));
   const desserts=meals.filter(m=>m.mode==='Tatlı'); assert.equal(desserts.length,2);
   for(const m of desserts) {
