@@ -11714,18 +11714,33 @@ const meals = [
     "name": "Teriyaki Tavuk",
     "mode": "Dünya Mutfağı",
     "subcategory": "Asya",
-    "status": "idea",
-    "variant": null,
-    "time": null,
-    "prep": null,
-    "cook": null,
+    "status": "sourced",
+    "variant": "Teriyaki soslu tavuk",
+    "time": 35,
+    "prep": 10,
+    "cook": 25,
     "cal": null,
-    "ingredients": [],
-    "source": null,
-    "yieldPeople": null,
-    "yieldLabel": null,
+    "ingredients": [
+      {"amount": 500, "unit": "gram", "name": "tavuk göğsü"},
+      {"amount": 4, "unit": "yemek kaşığı", "name": "soya sosu"},
+      {"amount": 1, "unit": "yemek kaşığı", "name": "toz şeker"},
+      {"amount": 1, "unit": "tatlı kaşığı", "name": "bal"},
+      {"amount": 1, "unit": "çay kaşığı", "name": "zencefil"},
+      {"amount": 2, "unit": "diş", "name": "sarımsak"},
+      {"amount": 3, "unit": "yemek kaşığı", "name": "zeytinyağı"},
+      {"amount": 0.5, "unit": "çay bardağı", "name": "su"},
+      {"amount": 1, "unit": "tatlı kaşığı", "name": "tuz"},
+      {"amount": 1, "unit": "tutam", "name": "susam"},
+      {"amount": 1, "unit": "yemek kaşığı", "name": "sirke"},
+      {"amount": 2, "unit": "yemek kaşığı", "name": "nişasta (isteğe bağlı)"}
+    ],
+    "source": "https://yemek.com/tarif/teriyaki-soslu-tavuk/",
+    "yieldPeople": 4,
+    "yieldLabel": "4 kişilik",
     "extraPrep": false,
-    "note": "Bu yemek yalnızca fikir olarak listeleniyor. Süre, kalori ve malzemeleri henüz doğrulanmadı."
+    "note": "Beş adımın tamamı doğrulandı; listedeki malzemelerin hepsi adımlarda kullanılıyor. Soya sosu ve zeytinyağı kaynakta aralık olarak verilmiş (3-5 ve 3-4 yemek kaşığı), alt sınıra yakın tek değer yazıldı. Kaynak kalori vermiyor.",
+    "waitLabel": null,
+    "checkedAt": "2026-09-12"
   },
   {
     "id": "meal-193",
@@ -13116,6 +13131,65 @@ const meals = [
     "note": "Kaynakta porsiyon kalorisi belirtilmemiştir. Kaynağın isteğe bağlı saydığı ek yeşillikler listeye dahil edilmemiştir."
   },
   {
+    "id": "side-8",
+    "name": "Guacamole",
+    "mode": "Eşlikçi",
+    "subcategory": "Meze",
+    "status": "sourced",
+    "companionOnly": true,
+    "variant": "Meksika usulü guacamole",
+    "prep": 15,
+    "cook": 0,
+    "time": 15,
+    "yieldPeople": 4,
+    "yieldLabel": "4 kişilik",
+    "extraPrep": false,
+    "waitLabel": null,
+    "cal": 120,
+    "ingredients": [
+      {"amount": 2, "unit": "adet", "name": "avokado"},
+      {"amount": 0.5, "unit": "adet", "name": "lime suyu"},
+      {"amount": 1, "unit": "diş", "name": "sarımsak"},
+      {"amount": 0.25, "unit": "adet", "name": "mor soğan"},
+      {"amount": 3, "unit": "adet", "name": "kiraz domates"},
+      {"amount": 1, "unit": "avuç", "name": "kişniş yaprağı"},
+      {"amount": 1, "unit": "tutam", "name": "tuz"},
+      {"amount": 1, "unit": "tutam", "name": "pul biber"}
+    ],
+    "source": "https://yemek.com/tarif/guacamole/",
+    "note": "Kaynak kaloriyi açıkça 1 porsiyon için veriyor. Üç adımın tamamı doğrulandı; listedeki sekiz malzemenin hepsi adımlarda kullanılıyor. Pişirme yok.",
+    "checkedAt": "2026-09-12"
+  },
+  {
+    "id": "side-9",
+    "name": "Salçalı Bulgur Pilavı",
+    "mode": "Eşlikçi",
+    "subcategory": "Pilav",
+    "status": "sourced",
+    "companionOnly": true,
+    "variant": "Salçalı tereyağlı bulgur pilavı",
+    "prep": 10,
+    "cook": 25,
+    "time": 35,
+    "yieldPeople": 6,
+    "yieldLabel": "6 kişilik",
+    "extraPrep": false,
+    "waitLabel": null,
+    "cal": null,
+    "ingredients": [
+      {"amount": 1.5, "unit": "su bardağı", "name": "pilavlık bulgur"},
+      {"amount": 3, "unit": "su bardağı", "name": "sıcak su"},
+      {"amount": 0.5, "unit": "yemek kaşığı", "name": "biber salçası"},
+      {"amount": 1, "unit": "yemek kaşığı", "name": "domates salçası"},
+      {"amount": 3, "unit": "yemek kaşığı", "name": "tereyağı"},
+      {"amount": 2, "unit": "yemek kaşığı", "name": "sıvı yağ"},
+      {"amount": 1, "unit": "tatlı kaşığı", "name": "tuz"}
+    ],
+    "source": "https://yemek.com/index%2Ephp/tarif/salcali-tereyagli-bulgur-pilavi/",
+    "note": "Beş adımın tamamı doğrulandı; yedi malzemenin hepsi adımlarda kullanılıyor. Kaynak kalori vermiyor. Kaynak adresi arama sonucunda bu kodlanmış biçimde döndü, uydurulmadan aynen yazıldı.",
+    "checkedAt": "2026-09-12"
+  },
+  {
     "id": "side-7",
     "name": "Atom Mezesi",
     "mode": "Eşlikçi",
@@ -13161,7 +13235,7 @@ const menuPairings = {
     {name:"Karnabahar çorbası",kind:"Çorba",catalogId:"meal-136"},{name:"Kinoa salatası",kind:"Salata"}
   ]},
   "meal-6": {source:"https://yemek.com/tarif/tavuk-fajita/", items:[
-    {name:"Tortilla",kind:"Ekmek",purchased:true},{name:"Guacamole",kind:"Sos / Meze"}
+    {name:"Tortilla",kind:"Ekmek",purchased:true},{name:"Guacamole",kind:"Sos / Meze",catalogId:"side-8"}
   ]},
   "meal-7": {source:"https://yemek.com/tarif/kori-soslu-tavuk/", items:[
     {name:"Pirinç pilavı",kind:"Pilav",catalogId:"side-1"},{name:"Haşlanmış brokoli",kind:"Sebze",catalogId:"side-5"},{name:"Fırın patates",kind:"Sebze"},{name:"Hafif yoğurtlu salata",kind:"Salata"}
@@ -13170,7 +13244,7 @@ const menuPairings = {
     {name:"Fırınlanmış patates püresi",kind:"Sebze"},{name:"Maş fasulyeli yeşil salata",kind:"Salata"},{name:"Haşlanmış brokoli",kind:"Sebze",catalogId:"side-5"}
   ]},
   "meal-9": {source:"https://yemektarifleri.gzt.com/blog/mantinin-yanina-ne-gider-sofranizi-tamamlayacak-10-tarif-3534916", items:[
-    {name:"Mercimek çorbası",kind:"Çorba",catalogId:"meal-23"},{name:"Gavurdağı salatası",kind:"Salata"},{name:"Sütlaç",kind:"Tatlı"}
+    {name:"Mercimek çorbası",kind:"Çorba",catalogId:"meal-23"},{name:"Gavurdağı salatası",kind:"Salata",catalogId:"meal-143"},{name:"Sütlaç",kind:"Tatlı"}
   ]},
   "meal-10": {source:"https://yemek.com/tarif/lokanta-usulu-lahmacun/", items:[
     {name:"Acılı ezme",kind:"Meze"},{name:"Atom mezesi",kind:"Meze",catalogId:"side-7"}
@@ -13185,7 +13259,7 @@ const menuPairings = {
     {name:"Cacık",kind:"Meze",catalogId:"side-2"},{name:"Kuskuslu yaz salatası",kind:"Salata"}
   ]},
   "meal-15": {source:"https://yemek.com/tarif/etli-bamya/", items:[
-    {name:"Salçalı bulgur pilavı",kind:"Pilav"}
+    {name:"Salçalı bulgur pilavı",kind:"Pilav",catalogId:"side-9"}
   ]},
   "meal-16": {source:"https://yemek.com/tarif/karniyarik/", items:[
     {name:"Tereyağlı pilav",kind:"Pilav",catalogId:"side-3"},{name:"Cacık",kind:"Meze",catalogId:"side-2"},{name:"Yeşil salata",kind:"Salata"},{name:"Turşu",kind:"Turşu",purchased:true}
@@ -13194,7 +13268,7 @@ const menuPairings = {
     {name:"Tereyağlı pilav",kind:"Pilav",catalogId:"side-3"},{name:"Cacık",kind:"Meze",catalogId:"side-2"}
   ]},
   "meal-18": {source:"https://yemek.com/tarif/firinda-tavuk/", items:[
-    {name:"Arpa şehriyeli pirinç pilavı",kind:"Pilav"},{name:"Mevsim salatası",kind:"Salata",catalogId:"side-4"},{name:"Roka salatası",kind:"Salata"},{name:"Acılı şalgam",kind:"İçecek",purchased:true}
+    {name:"Arpa şehriyeli pirinç pilavı",kind:"Pilav"},{name:"Mevsim salatası",kind:"Salata",catalogId:"side-4"},{name:"Roka salatası",kind:"Salata",catalogId:"meal-142"},{name:"Acılı şalgam",kind:"İçecek",purchased:true}
   ]},
   "meal-19": {source:"https://yemek.com/tarif/firinda-makarna/", items:[
     {name:"Mercimek çorbası",kind:"Çorba",catalogId:"meal-23"},{name:"Mısırlı salata",kind:"Salata"},{name:"Ev köftesi",kind:"Ana yemek"}

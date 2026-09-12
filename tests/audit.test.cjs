@@ -17,8 +17,8 @@ test('All 238 legacy rows are accounted for; no duplicate active IDs or names', 
   assert.equal(legacy.length+Object.keys(mealAliases).length+1,238);
   assert.equal(new Set(meals.map(m => m.id)).size,meals.length);
   assert.equal(new Set(meals.map(m => m.name.toLocaleLowerCase('tr-TR'))).size,meals.length);
-  assert.equal(meals.filter(m => m.status === 'sourced').length,159);
-  assert.equal(meals.filter(m => m.status === 'idea').length,83);
+  assert.equal(meals.filter(m => m.status === 'sourced').length,162);
+  assert.equal(meals.filter(m => m.status === 'idea').length,82);
   assert(!meal(190));
   Object.values(mealAliases).forEach(id => assert(meals.some(m => m.id === id)));
 });
@@ -242,8 +242,12 @@ test('Source link navigates reliably and has a copy fallback; the decorative blo
   await s.elements.copySource.click();
   assert.equal(s.context.window.prompted.value,meal(79).source);
   const css=fs.readFileSync(path.join(root,'dist/style.css'),'utf8');
-  assert(css.includes('body{background:linear-gradient(135deg'));
+  // The decorative radial circle once used percentage stops, which resolved
+  // against the growing document and swelled after every result. Any fixed
+  // background (flat colour or gradient) is fine; a percentage radial is not.
+  assert(/body\{background:(var\(--paper\)|linear-gradient\(135deg)/.test(css));
   assert(!css.includes('radial-gradient(circle 360px'));
+  assert(!/radial-gradient\(circle at [^)]*\d%\s+0\s+\d/.test(css));
   for (const recipe of meals.filter(m => m.status === 'sourced')) {
     s.eval(`showMeal(byId.get(${JSON.stringify(recipe.id)}))`);
     assert.equal(s.elements.sourceLink.attrs.href,recipe.source);
