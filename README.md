@@ -5,7 +5,9 @@ GitHub güncellemeleri mevcut Sites yayınını otomatik değiştirmez.
 
 ## Güncel durum — 12 Eylül 2026
 
-- 244 kayıt: 162 kaynakla eşleştirilmiş tarif, 82 doğrulanmamış fikir.
+- 244 kayıt: 163 kaynakla eşleştirilmiş tarif, 81 doğrulanmamış fikir.
+- `meal-208` Chili Con Carne (chili-con-carne, 6 kişilik, kişi başı 480 kcal) — Meksika kolundaki ilk kaynaklı tarif. Pişirme 2 saat.
+- Chili Con Carne için iki aday reddedildi: `chilli-con-carne` (7 kişilik) adımlarında maydanoz geçiyor ama listede yok; `chili-con-carne-2` (4 kişilik) adımlarında "1 su bardağı sıcak su" geçiyor, listede yok.
 - **Tüm menüler çalışıyor: 20/20.** `side-9` Salçalı Bulgur Pilavı (salcali-tereyagli-bulgur-pilavi, 6 kişilik) eklenip Etli Bamya'ya bağlandı; son ölü menü de kapandı.
 - `meal-192` Teriyaki Tavuk (teriyaki-soslu-tavuk, 4 kişilik) — Dünya Mutfağı'nın boş Asya kolundaki ilk kaynaklı tarif.
 - **Yeni tasarım dili uygulandı.** Gri-mavi ve mat kahve paleti kalktı; krem zemin, domates kırmızısı aksiyon rengi, kömür karası metin, Lora başlıklar. Yemek kartı kırmızı zeminden beyaz karta çevrildi. Zemin gradyanı düz renge indi.
@@ -49,15 +51,28 @@ dosyası eklenmelidir.
   kararlaştırılmadan uygulanmayacak.
 - **Alan adı `nepisse.app`** alınınca `manifest.webmanifest` ve paylaşım
   metinleri güncellenecek.
-- **"Başka yemek" de karta kaydırmalı.** Şu an kaydırmıyor, çünkü düğme kartın
-  içinde ve tekrar kaydırmak sarsıntı yaratıyor. Doğru çözüm muhtemelen kartın
-  üstünü hizalamak (düğmeyi değil) ya da kart yerinde kalırken içeriği
-  değiştirmek. Yerleşim kararıyla birlikte bakılacak.
+- **"Başka yemek" de karta kaydırmalı — gerçek cihazda doğrulandı (öncelikli).**
+  Telefonda "Başka yemek"e basınca yeni tarif geliyor ama sayfa kartın başına
+  dönmüyor; kullanıcı kartın ortasında/altında kalıyor ve yeni yemeğin adını
+  görmek için elle yukarı kaydırmak zorunda. Bu, kaydırmayı bilerek dışarıda
+  bırakma kararının telefonda yanlış olduğunu gösteriyor. Çözüm kartın üstünü
+  hizalamak (`revealCard()` zaten `block:'start'` kullanıyor, `#again` için de
+  çağrılmalı). Tek risk masaüstünde gereksiz sarsıntı; gerekirse yalnızca kart
+  görünüm alanının dışındaysa kaydırmak gibi bir koşul eklenebilir.
 - **Favori mesajı netleştirilmeli.** Kalbe basınca çıkan "Bu filtrelere uygun
   başka favori yok" teknik olarak doğru ama kafa karıştırıyor: kullanıcı
   favorilerinin silindiğini sanabiliyor. Ya mesaj açıkça filtreye işaret
   etmeli ya da favoriler listesi filtreden bağımsız gösterilmeli. Karar
   tasarım turunda.
+
+- **Kartta çift "Bilinmiyor".** Kalorisi olmayan tariflerde ("Kaynak porsiyonu"
+  ve "Seçilen kişi sayısı için") iki hücre birden "Bilinmiyor" yazıyor ve boş
+  bir izlenim bırakıyor. Kaynak kişi başı kalori vermediği için değer
+  uydurulamaz; çözüm görsel olmalı — iki hücreyi tek satırda birleştirmek,
+  kalori bloğunu tamamen gizlemek ya da "kaynak kalori vermiyor" gibi tek ve
+  açıklayıcı bir ifade kullanmak. Kart üst şeridi (SÜRE / PORSİYON KALORİ /
+  TOPLAM) tasarımıyla birlikte ele alınacak; şu an 162 kaynaklı tarifin büyük
+  kısmında kalori yok, yani bu kartların çoğunu etkiliyor.
 
 ### Veri ve içerik
 - **Dünya Mutfağı %32, Fast Food/Kaçamak %37** — en zayıf iki kategori.

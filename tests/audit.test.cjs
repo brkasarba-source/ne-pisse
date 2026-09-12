@@ -17,8 +17,8 @@ test('All 238 legacy rows are accounted for; no duplicate active IDs or names', 
   assert.equal(legacy.length+Object.keys(mealAliases).length+1,238);
   assert.equal(new Set(meals.map(m => m.id)).size,meals.length);
   assert.equal(new Set(meals.map(m => m.name.toLocaleLowerCase('tr-TR'))).size,meals.length);
-  assert.equal(meals.filter(m => m.status === 'sourced').length,162);
-  assert.equal(meals.filter(m => m.status === 'idea').length,82);
+  assert.equal(meals.filter(m => m.status === 'sourced').length,163);
+  assert.equal(meals.filter(m => m.status === 'idea').length,81);
   assert(!meal(190));
   Object.values(mealAliases).forEach(id => assert(meals.some(m => m.id === id)));
 });
