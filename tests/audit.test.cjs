@@ -17,8 +17,8 @@ test('All 238 legacy rows are accounted for; no duplicate active IDs or names', 
   assert.equal(legacy.length+Object.keys(mealAliases).length+1,238);
   assert.equal(new Set(meals.map(m => m.id)).size,meals.length);
   assert.equal(new Set(meals.map(m => m.name.toLocaleLowerCase('tr-TR'))).size,meals.length);
-  assert.equal(meals.filter(m => m.status === 'sourced').length,163);
-  assert.equal(meals.filter(m => m.status === 'idea').length,81);
+  assert.equal(meals.filter(m => m.status === 'sourced').length,169);
+  assert.equal(meals.filter(m => m.status === 'idea').length,75);
   assert(!meal(190));
   Object.values(mealAliases).forEach(id => assert(meals.some(m => m.id === id)));
 });
@@ -153,6 +153,7 @@ function setup(storage = null, storageThrows = false) {
     removeAttribute(k) { delete this.attrs[k]; }
     click() { this.clicked=true; return this.onclick?.(); }
     scrollIntoView(opts) { this.scrolledIntoView=(this.scrolledIntoView||0)+1; this.lastScrollOpts=opts; }
+    getBoundingClientRect() { return this.rect || {top:0,bottom:0,left:0,right:0}; }
     remove() { this.removed=true; }
     closest() { return this; }
   }
@@ -160,10 +161,10 @@ function setup(storage = null, storageThrows = false) {
   const elements = Object.fromEntries(ids.map(id=>[id,new Element()]));
   elements.time.value='Infinity'; elements.calorie.value='any';
   const created=[]; const canvasContext={measureText:text=>({width:text.length*18}),fillRect(){},fillText(){}};
-  const document={querySelector:s=>{ assert(s.startsWith('#')); assert(elements[s.slice(1)], 'Missing HTML element '+s); return elements[s.slice(1)]; },querySelectorAll:()=>[],body:new Element('body'),createElement:tag=>{const e=new Element(tag); created.push(e); if(tag==='canvas'){e.getContext=()=>canvasContext;e.toBlob=cb=>cb(new Blob(['stub'],{type:'image/png'}));} return e;}};
+  const document={querySelector:s=>{ assert(s.startsWith('#')); assert(elements[s.slice(1)], 'Missing HTML element '+s); return elements[s.slice(1)]; },querySelectorAll:()=>[],body:new Element('body'),documentElement:{clientHeight:800},createElement:tag=>{const e=new Element(tag); created.push(e); if(tag==='canvas'){e.getContext=()=>canvasContext;e.toBlob=cb=>cb(new Blob(['stub'],{type:'image/png'}));} return e;}};
   const navigator={}; const timers=[];
   const location={assigned:null,assign(url){this.assigned=url;},reload(){this.reloaded=true;}};
-  const context=vm.createContext({document,navigator,window:{addEventListener(){},location,matchMedia:query=>({matches:false,media:query}),prompt(label,value){this.prompted={label,value};}},localStorage:{getItem(){if(storageThrows)throw Error('denied');return storage;},setItem(k,v){if(storageThrows)throw Error('denied');storage=v;}},setTimeout:(fn)=>{timers.push(fn);return timers.length;},clearTimeout(){},Blob,File:class{constructor(parts,name,options){this.name=name;this.type=options.type;}},URL:{createObjectURL:()=> 'blob:test',revokeObjectURL(){}},console});
+  const context=vm.createContext({document,navigator,window:{addEventListener(){},location,matchMedia:query=>({matches:false,media:query}),prompt(label,value){this.prompted={label,value};},innerHeight:800},localStorage:{getItem(){if(storageThrows)throw Error('denied');return storage;},setItem(k,v){if(storageThrows)throw Error('denied');storage=v;}},setTimeout:(fn)=>{timers.push(fn);return timers.length;},clearTimeout(){},Blob,File:class{constructor(parts,name,options){this.name=name;this.type=options.type;}},URL:{createObjectURL:()=> 'blob:test',revokeObjectURL(){}},console});
   vm.runInContext(catalog+'\n'+app,context);
   return {elements,created,navigator,context,eval:code=>vm.runInContext(code,context)};
 }
@@ -229,8 +230,32 @@ test('Every sourced ingredient stays readable for one through eight people', () 
 test('Changing filters marks the existing card and favorites honor the filter', () => {
   const s=setup();s.eval('showMeal(byId.get("meal-10"))');s.elements.heart.click();
   s.elements.time.value='30';s.elements.time.onchange();assert.equal(s.elements.filterWarning.hidden,false);
-  s.elements.favoritesButton.click();assert(s.elements.toast.textContent.includes('uygun başka favori yok'));
+  // The favorite still exists; only the filter hides it, and the message must
+  // say so rather than reading like the favorites were wiped.
+  s.elements.favoritesButton.click();
+  assert(s.elements.toast.textContent.includes('1 favoriniz duruyor'));
+  assert(s.elements.toast.textContent.includes('silinmedi'));
   s.elements.spin.click();assert(s.eval('current.time<=30'));assert.equal(s.elements.filterWarning.hidden,true);
+});
+test('Favorite button explains an empty result instead of implying lost favorites', () => {
+  const s=setup();
+  // No favorites at all: say how to make one, never "none match the filter".
+  s.elements.favoritesButton.click();
+  assert(s.elements.toast.textContent.includes('Henüz favoriniz yok'));
+  assert(!s.elements.toast.textContent.includes('filtre'));
+  // One favorite, and it is the card already on screen.
+  s.eval('showMeal(byId.get("meal-10"))');s.elements.heart.click();
+  s.elements.favoritesButton.click();
+  assert(s.elements.toast.textContent.includes('zaten ekranda'));
+  assert(s.elements.toast.textContent.includes('1 favoriniz duruyor'));
+  // A second favorite is reachable, and the card is scrolled into view since
+  // the button sits in the top bar, far above the card.
+  s.eval('showMeal(byId.get("meal-79"))');s.elements.heart.click();
+  const scrolls=s.elements.mealCard.scrolledIntoView||0;
+  s.elements.favoritesButton.click();
+  assert.equal(s.eval('current.id'),'meal-10');
+  assert.equal(s.elements.mealCard.scrolledIntoView,scrolls+1);
+  assert.equal(s.eval('saved.favorites.length'),2);
 });
 test('Source link navigates reliably and has a copy fallback; the decorative blob is removed', async () => {
   const s=setup();
@@ -343,8 +368,26 @@ test('Homemade hamburger includes proofing and patty rest in its selectable tota
 test('Unknown cards and exported text never print fabricated numbers', () => {
   const s=setup();s.eval('showMeal(byId.get("meal-11"))');
   assert.equal(s.elements.mealTime.textContent,'Doğrulanmadı');assert.equal(s.elements.perCal.textContent,'Bilinmiyor');assert.equal(s.elements.ingredients.children.length,0);
-  assert(s.eval('shareLines(current,2).join(" ").includes("doğrulanmadı")'));
-  assert(!s.eval('shareLines(current,2).join(" ").includes("null")'));
+  const text = () => s.eval('shareBlocks(current,2).map(b => b.text).join(" ")');
+  assert(text().includes('doğrulanmadı'));
+  assert(!text().includes('null'));
+  // Unknown calorie collapses into one "Kalori" cell instead of repeating
+  // "Bilinmiyor" in both the per-portion and per-person slots.
+  assert(s.elements.totalCalCell.hidden);
+  assert.equal(s.elements.perCalLabel.textContent,'Kalori');
+  assert(s.elements.metrics.classList.contains('cal-unknown'));
+  // An unverified idea card offers no measurements at all, only the warning.
+  assert(!s.eval('shareBlocks(current,2).some(b => b.type === "item")'));
+  assert(!s.eval('shareBlocks(current,2).some(b => b.type === "cal")'));
+  // A sourced recipe whose source gave no calorie says so once, per person.
+  s.eval('showMeal(byId.get("meal-206"))');
+  assert(s.eval('shareBlocks(current,2).some(b => b.text === "Kişi başı kalori bilinmiyor")'));
+  assert(!s.eval('shareBlocks(current,2).some(b => b.text.includes("1 porsiyon"))'));
+  // A recipe with a real calorie value keeps both cells and the split line.
+  s.eval('showMeal(byId.get("meal-1"))');
+  assert(!s.elements.totalCalCell.hidden);
+  assert.equal(s.elements.perCalLabel.textContent,'Kaynak porsiyonu');
+  assert(!s.elements.metrics.classList.contains('cal-unknown'));
 });
 test('Share success, download fallback, cancel and failure release the button (mock APIs)', async () => {
   const s=setup();s.eval('showMeal(byId.get("meal-10"))');
@@ -361,18 +404,143 @@ test('Every script/link/SW precache asset exists and catalog loads before app', 
   assets.forEach(asset=>assert(fs.existsSync(path.join(root,'dist',asset)),asset));
   assert(sw.includes("key.startsWith('ne-pisse-')"));
 });
-test('Spin scrolls the meal card into view; "Başka yemek" does not', () => {
+test('Ingredient lines stay shopping-list length; provenance lives in the note', () => {
+  // A card line is read in the kitchen. Audit wording ("adımlarda kullanılıyor,
+  // kaynak malzeme listesinde ölçü vermiyor") belongs in the note field, which
+  // no longer reaches the screen at all.
+  for(const m of meals) for(const item of m.ingredients) {
+    const text = typeof item === 'string' ? item : item.name;
+    assert(text.length<=60,`${m.id} malzeme satiri kart icin fazla uzun (${text.length}): ${text}`);
+    assert(!/adımlarda|malzeme listesinde|doğrulandı|aralık olarak/.test(text),`${m.id} malzeme satirinda denetim dili: ${text}`);
+    assert(!/^not:/.test(text),`${m.id} not satiri malzeme listesinde: ${text}`);
+  }
+  // The wait label is the one caveat still shown (in fine print) because it
+  // changes the evening's plan; it stays a practical sentence, not an audit entry.
+  for(const m of meals.filter(m => m.waitLabel)) {
+    assert(m.waitLabel.length<=100,`${m.id} bekleme etiketi ince yazi icin uzun (${m.waitLabel.length})`);
+    assert(!/başlığının|uyuşmuyor|adımlarında net değil/.test(m.waitLabel),`${m.id} bekleme etiketinde denetim dili`);
+  }
+  // The audit note itself must not be rendered anywhere on the card.
+  const s=setup(); s.eval('showMeal(byId.get("meal-206"))');
+  assert(!s.elements.mealMenu.textContent.includes(meal(206).note));
+  assert(!s.elements.portionNote.textContent.includes(meal(206).note));
+  assert(s.elements.mealMenu.textContent.includes(meal(206).variant));
+  assert(s.elements.mealMenu.textContent.includes(meal(206).yieldLabel));
+});
+test('Share card carries the whole menu: main recipe, chosen companions, per-person calorie', () => {
+  const s=setup();
+  s.eval('showMeal(byId.get("meal-19"))');
+  // Alone: one ingredient run, no per-recipe headings, no source or audit note.
+  let blocks=s.eval('shareBlocks(current,2)');
+  assert.equal(blocks.filter(b => b.type==='group').length,0);
+  assert(blocks.some(b => b.type==='item'));
+  assert.equal(blocks[0].type,'name'); assert.equal(blocks[0].text,meal(19).name);
+  const joined = () => s.eval('shareBlocks(current,2).map(b => b.text).join(" | ")');
+  assert(!joined().includes('http'),'paylasim karti kaynak baglantisi tasimamali');
+  assert(!joined().includes(meal(19).note),'paylasim karti denetim notu tasimamali');
+  assert(joined().includes('Kişi başı'));
+  // With a companion chosen, its ingredients join the card under their own
+  // heading, exactly as the on-screen shopping list groups them.
+  s.elements.buildMenu.click();
+  const select=s.elements.menuSuggestions.children[0].children[2];
+  select.value='meal-23'; select.onchange();
+  blocks=s.eval('shareBlocks(current,2)');
+  const groups=blocks.filter(b => b.type==='group');
+  assert.equal(groups.length,2);
+  assert(groups[0].text.startsWith('Ana tarif · '+meal(19).name));
+  assert(groups[1].text.startsWith('Eşlikçi · '+meal(23).name));
+  const rows=s.eval('shoppingGroups().flatMap(g => g.rows).length');
+  assert.equal(blocks.filter(b => b.type==='item').length,rows,'kartta eksik malzeme var');
+  // Companion calories are not in the sources, so the figure stays the main
+  // recipe's and says so instead of quietly under-reporting the menu.
+  assert(blocks.find(b => b.type==='cal').text.includes('yalnızca ana tarif'));
+});
+test('Ninth package sources six world/fast-food recipes in people and hides no wait', () => {
+  const batch = ['meal-206','meal-188','meal-211','meal-197','meal-195','meal-183'];
+  for(const id of batch) {
+    const m = meals.find(x => x.id === id);
+    assert(m,'Katalog kaydi yok: '+id);
+    assert.equal(m.status,'sourced',id+' sourced olmali');
+    assert(m.source&&m.source.startsWith('https://'),id+' kaynak baglantisi yok');
+    assert(m.checkedAt,id+' checkedAt yok');
+    // Portion must be in people: "4 adet" or "1 tepsi" was rejected upstream.
+    assert(Number.isFinite(m.yieldPeople)&&m.yieldPeople>0,id+' kisi sayisi yok');
+    assert(/kişilik/.test(m.yieldLabel),id+' porsiyonu kisi cinsinden degil: '+m.yieldLabel);
+    assert(m.ingredients.length>0,id+' malzemesiz');
+    // Calories are the source's own per-portion figure or nothing at all.
+    assert(m.cal===null||m.cal>0,id+' kalori yer tutucu');
+    for(const item of m.ingredients) {
+      // An unmeasured ingredient must say the source withheld the amount,
+      // so a reader can tell a gap from a number we invented.
+      if(typeof item==='string') { assert(item.includes('kaynak'),id+' olcusuz malzeme kaynagi anmiyor: '+item); continue; }
+      assert(item.name&&item.unit,id+' malzeme adi/birimi eksik');
+      assert(Number.isFinite(item.amount)&&item.amount>0,id+' malzeme miktari sayi degil');
+      for(let people=1;people<=8;people++) assert(Number.isFinite(item.amount*people/m.yieldPeople));
+    }
+    if(m.extraPrep) assert(m.waitLabel,id+' extraPrep true ama bekleme aciklamasi yok');
+  }
+  // Squid rests in the fridge for 3+ hours on top of its 45 active minutes, so
+  // it must stay out of every finite time filter even though time is a number.
+  const kalamar = meals.find(m => m.id === 'meal-183');
+  assert.equal(kalamar.time,45); assert.equal(kalamar.extraPrep,true);
+  assert(/3 saat/.test(kalamar.waitLabel));
+  assert(!matchesMeal(kalamar,{maxTime:240,people:2,calorie:'any'}));
+  assert(matchesMeal(kalamar,{maxTime:Infinity,people:2,calorie:'any'}));
+  // Only the two sources that printed a per-portion figure carry calories.
+  assert.equal(meals.find(m => m.id === 'meal-195').cal,285);
+  assert.equal(kalamar.cal,315);
+  for(const id of ['meal-206','meal-188','meal-211','meal-197']) assert.equal(meals.find(m => m.id === id).cal,null,id+' kaynak kalori vermiyordu');
+  // Pho's 1.5 hour simmer is the source's own cook time, not a hidden wait.
+  const pho = meals.find(m => m.id === 'meal-197');
+  assert.equal(pho.time,pho.prep+pho.cook); assert.equal(pho.extraPrep,false);
+});
+test('Fonts are self-hosted, precached, and never fetched from a CDN', () => {
+  const css=fs.readFileSync(path.join(root,'dist/style.css'),'utf8');
+  const sw=fs.readFileSync(path.join(root,'dist/sw.js'),'utf8');
+  const assets=vm.runInNewContext(sw.split('self.addEventListener')[0]+'ASSETS');
+  const faces=[...css.matchAll(/@font-face\{[^}]*\}/g)].map(m=>m[0]);
+  assert(faces.length>=6,'font-face bloklari eksik');
+  const families=new Set();
+  for(const face of faces) {
+    const url=face.match(/url\(([^)]+)\)/);
+    assert(url,'font-face src yok: '+face.slice(0,60));
+    // An external font URL would break the offline install the SW promises.
+    assert(!/^https?:|\/\//.test(url[1]),'font CDN`den cekiliyor: '+url[1]);
+    assert(fs.existsSync(path.join(root,'dist',url[1])),'font dosyasi yok: '+url[1]);
+    assert(assets.includes(url[1]),'font onbellek listesinde yok: '+url[1]);
+    // Turkish ğ Ğ ş Ş İ live in latin-ext, so every family needs both ranges.
+    assert(/unicode-range:/.test(face),'unicode-range yok: '+url[1]);
+    families.add(face.match(/font-family:\s*([^;]+)/)[1].trim());
+  }
+  for(const family of families) {
+    const ext=faces.filter(f=>f.includes(`font-family:${family}`)&&f.includes('U+0100-02BA'));
+    assert(ext.length,`${family} icin latin-ext yok; Turkce ğ ş İ kirilir`);
+  }
+  assert(!/fonts\.googleapis|fonts\.gstatic|@import/.test(css),'CSS disaridan font cekiyor');
+  assert(!/fonts\.googleapis|fonts\.gstatic/.test(html),'HTML disaridan font cekiyor');
+});
+test('Spin always scrolls the meal card into view; "Başka yemek" only when it drifted off screen', () => {
   const s = setup();
   // "Bu akşamı seç" reveals the card, which sits below the fold on a phone.
   s.elements.spin.click();
   assert.equal(s.elements.mealCard.scrolledIntoView, 1);
   assert.equal(s.elements.mealCard.lastScrollOpts.block, 'start');
   assert.equal(s.elements.mealCard.lastScrollOpts.behavior, 'smooth');
-  // "Başka yemek" is itself inside the card, so scrolling again would be a jolt.
+  // Card is fully within the viewport (the default stub rect) — "Başka
+  // yemek" is itself inside it, so scrolling again would just be a jolt.
   s.elements.again.click();
   assert.equal(s.elements.mealCard.scrolledIntoView, 1);
-  // Repeated spins keep scrolling, since the user may have scrolled away.
-  s.elements.spin.click();
+  // On a phone the freshly revealed card can end up partly below the fold
+  // (e.g. the user scrolled down to read ingredients) — "Başka yemek" must
+  // then bring it back into view instead of leaving the name off screen.
+  s.elements.mealCard.rect = {top: 500, bottom: 1200, left: 0, right: 400};
+  s.elements.again.click();
   assert.equal(s.elements.mealCard.scrolledIntoView, 2);
+  assert.equal(s.elements.mealCard.lastScrollOpts.block, 'start');
+  // Repeated spins keep scrolling regardless, since the user may have
+  // scrolled away.
+  s.elements.mealCard.rect = {top: 0, bottom: 0, left: 0, right: 400};
+  s.elements.spin.click();
+  assert.equal(s.elements.mealCard.scrolledIntoView, 3);
 });
 (async()=>{for(const t of tests){await t.run();console.log('PASS',t.name);}console.log(`${tests.length} tests passed; browser rendering and native device APIs NOT tested.`);})().catch(error=>{console.error(error);process.exitCode=1;});

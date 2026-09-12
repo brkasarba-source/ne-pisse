@@ -42,11 +42,18 @@ function updateStatus() {
   const recent = saved.history.slice(0,5).map(h => h.id);
   $('#resetSeen').hidden = eligible().length > 0 || !baseEligible().some(m => sessionSeen.includes(m.id) && !recent.includes(m.id) && m.id !== current?.id);
 }
-function timeText(m) { return Number.isFinite(m.time) ? `${m.time} dk` : (m.waitLabel || 'Doğrulanmadı'); }
+// Süre hücresi "45 dk" boyunda bir yer; kaynağın bekleme açıklaması oraya
+// sığmıyordu ve cümlenin tamamını başlık boyutunda basıyordu. Hücre kısa
+// kalır, bekleme uyarısı metriklerin altındaki ince yazıya iner.
+function timeText(m) { return Number.isFinite(m.time) ? `${m.time} dk` : (m.waitLabel ? 'Süre belirsiz' : 'Doğrulanmadı'); }
 function calorieText(m, count=1) { return Number.isFinite(m.cal) ? `≈ ${(m.cal*count).toLocaleString('tr-TR')} kcal` : 'Bilinmiyor'; }
+// Kartın üst paragrafı: yalnızca yemeği seçerken gereken bilgi. Kaydın
+// denetim notu ("... adımın tamamı doğrulandı", aralık/ölçü gerekçeleri)
+// katalogda kalır, arayüze çıkmaz — kaynağa bakmak isteyen için kartta
+// zaten "Kaynak tarifi aç" bağlantısı var.
 function detailsText(m) {
   if (!m.source) return m.note;
-  return `${m.variant} · Kaynak: ${m.yieldLabel}. ${m.prep} dk hazırlık + ${m.cook} dk pişirme.${m.waitLabel ? ` ${m.waitLabel}.` : ''} ${m.note} Eşlikçiler dahil değil.`;
+  return `${m.variant} · Kaynak: ${m.yieldLabel}. ${m.prep} dk hazırlık + ${m.cook} dk pişirme.`;
 }
 function gcd(a, b) {
   while (b) [a, b] = [b, a % b];
@@ -185,9 +192,19 @@ function refreshIngredientAmounts() {
 function renderMetrics() {
   if (!current) return;
   $('#mealTime').textContent = timeText(current);
+  const calKnown = Number.isFinite(current.cal);
+  // When the source gives no calorie figure, showing "Bilinmiyor" in both
+  // the per-portion and per-person cells reads as a duplicated bug rather
+  // than one honest fact. Merge them into a single "Kalori" cell instead.
+  $('#metrics').classList.toggle('cal-unknown', !calKnown);
+  $('#totalCalCell').hidden = !calKnown;
+  $('#perCalLabel').textContent = calKnown ? 'Kaynak porsiyonu' : 'Kalori';
   $('#perCal').textContent = calorieText(current);
   $('#totalCal').textContent = calorieText(current, people);
-  $('#portionNote').textContent = `${people} kişi için, kişi başı 1 kaynak porsiyonu varsayılır. ${current.batchLimited && people > current.yieldPeople ? `Bu tarif tek tava/tepsi kapasitesiyle sınırlı: ${current.yieldLabel} için verilen süre bu miktarda geçerli değil, parti parti pişirmeniz gerekir. ` : ''}${current.cal === null ? 'Kalori hesaplanamıyor.' : 'Kalori, kaynağın yaklaşık porsiyon değeridir; bağımsız besin hesabı değildir.'}`;
+  // Bekleme süresi denetim notu değil, akşam planını değiştiren bilgi:
+  // 3 saat buzdolabı isteyen bir tarifi saat 18:00'de seçen kişi bunu
+  // önceden bilmeli. Başlık boyutunda değil, ince yazıda duruyor.
+  $('#portionNote').textContent = `${people} kişi için, kişi başı 1 kaynak porsiyonu varsayılır. ${current.waitLabel ? `Ek bekleme: ${current.waitLabel.replace(/\.\s*$/, '')}. ` : ''}${current.batchLimited && people > current.yieldPeople ? `Bu tarif tek tava/tepsi kapasitesiyle sınırlı: ${current.yieldLabel} için verilen süre bu miktarda geçerli değil, parti parti pişirmeniz gerekir. ` : ''}${current.cal === null ? 'Kalori hesaplanamıyor.' : 'Kalori, kaynağın yaklaşık porsiyon değeridir; bağımsız besin hesabı değildir.'}`;
   $('#filterWarning').hidden = matchesMeal(current, filters());
 }
 function renderHeart() {
@@ -343,14 +360,26 @@ function pick(scrollToCard = false) {
   // Synchronous selection: no queued timer can overwrite a newer choice or filter.
   showMeal(list[Math.floor(Math.random()*list.length)]);
   const wheel = $('#wheel'); wheel.classList.remove('spinning'); void wheel.offsetWidth; wheel.classList.add('spinning');
-  if (scrollToCard) revealCard();
+  revealCard(scrollToCard);
 }
 
 // Bring the freshly chosen meal card into view. Guarded because the test DOM
 // stub has no scrollIntoView, and honours the reduced-motion preference.
-function revealCard() {
+// force=true (the "Bu akşamı seç" wheel spin) always scrolls, since the card
+// is below the fold on first reveal. force=false ("Başka yemek", which lives
+// inside the card itself) only scrolls when the card has drifted out of the
+// viewport — otherwise the button click would jolt a card the user is
+// already looking at.
+function revealCard(force = true) {
   const card = $('#mealCard');
   if (!card || typeof card.scrollIntoView !== 'function') return;
+  if (!force && typeof card.getBoundingClientRect === 'function') {
+    try {
+      const rect = card.getBoundingClientRect();
+      const viewportHeight = (typeof window !== 'undefined' && window.innerHeight) || document.documentElement.clientHeight;
+      if (rect.top >= 0 && rect.bottom <= viewportHeight) return;
+    } catch { /* fall through and scroll */ }
+  }
   let smooth = true;
   try { smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { smooth = true; }
   try { card.scrollIntoView({behavior: smooth ? 'smooth' : 'auto', block: 'start'}); }
@@ -383,9 +412,18 @@ $('#heart').onclick = () => {
   persist(); renderHeart();
 };
 $('#favoritesButton').onclick = () => {
-  const list = baseEligible().filter(m => saved.favorites.includes(m.id) && m.id !== current?.id);
-  if (!list.length) return toast('Bu filtrelere uygun başka favori yok.');
+  // An empty result here reads like the favorites were wiped, so every
+  // message says how many are still stored and what is actually hiding them.
+  const stored = saved.favorites.length;
+  if (!stored) return toast('Henüz favoriniz yok. Yemek kartındaki ♡ düğmesiyle ekleyebilirsiniz.');
+  const matching = baseEligible().filter(m => saved.favorites.includes(m.id));
+  const list = matching.filter(m => m.id !== current?.id);
+  if (!list.length) {
+    if (matching.length) return toast(`Filtrelere uyan tek favoriniz zaten ekranda. ${stored} favoriniz duruyor.`);
+    return toast(`${stored} favoriniz duruyor, silinmedi. Hiçbiri güncel filtrelere uymuyor; mod, süre veya kalori seçimini gevşetince geri gelir.`);
+  }
   showMeal(list[Math.floor(Math.random()*list.length)]);
+  revealCard(true);
 };
 $('#ate').onclick = () => {
   if (!current) return;
@@ -397,8 +435,42 @@ function wrapLines(ctx, text, width) {
   for (const word of text.split(/\s+/)) { const next = line ? `${line} ${word}` : word; if (ctx.measureText(next).width > width && line) { lines.push(line); line = word; } else line = next; }
   if (line) lines.push(line); return lines;
 }
-function shareLines(m, count) {
-  return [m.mode, m.name, detailsText(m), `Kaynak süresi: ${timeText(m)}`, `1 porsiyon: ${calorieText(m)} · ${count} porsiyon: ${calorieText(m,count)}`, 'Malzemeler seçilen kişi sayısına göre orantılanır. Eşlikçiler dahil değildir.', ...(m.source ? ['Kaynak: '+m.source] : []), 'Ne Pişse? · Bu akşamın yemek fikri'];
+// Paylaşım kartı mutfakta bakılacak bir alışveriş özetidir, künye değil:
+// yemeğin adı, seçilen kişi sayısına göre ölçeklenmiş malzemeler, kişi başı
+// kalori. Kaynak notu ve bağlantı bilerek yok.
+const SHARE = {width:1080, pad:96, ground:'#FAF7F2', card:'#FFFFFF', ink:'#2B2926', muted:'#6E6862', accent:'#D9412F', line:'#E5DED4'};
+const SHARE_STYLES = {
+  name: {font:"500 68px Lora, Georgia, serif", color:SHARE.ink, lineHeight:80, before:0, after:26, ruleAfter:true},
+  label:{font:"600 26px Inter, system-ui, sans-serif", color:SHARE.muted, lineHeight:34, before:10, after:22},
+  group:{font:"700 27px Inter, system-ui, sans-serif", color:SHARE.accent, lineHeight:36, before:22, after:14},
+  item: {font:"34px Inter, system-ui, sans-serif", color:SHARE.ink, lineHeight:48, before:0, after:8, bullet:true, indent:34},
+  cal:  {font:"600 42px Inter, system-ui, sans-serif", color:SHARE.accent, lineHeight:54, before:34, after:6, ruleBefore:true},
+  body: {font:"34px Inter, system-ui, sans-serif", color:SHARE.muted, lineHeight:48, before:12, after:12},
+  foot: {font:"26px Inter, system-ui, sans-serif", color:SHARE.muted, lineHeight:34, before:40, after:0},
+};
+function shareBlocks(m, count) {
+  const blocks = [{type:'name', text:m.name}];
+  if (!m.source) {
+    blocks.push({type:'body', text:'Bu yemek yalnızca fikir olarak listeleniyor; ölçüleri ve süresi henüz doğrulanmadı.'});
+  } else {
+    // Menüde eşlikçi seçildiyse kart da alışveriş listesinin tamamını
+    // gösterir: ekranda görünen menü ile paylaşılan kart aynı şey olmalı.
+    const groups = m === current
+      ? shoppingGroups()
+      : [{recipe: m, rows: m.ingredients.map(item => ({item, recipe: m}))}];
+    blocks.push({type:'label', text:`${count} kişi için malzemeler`});
+    for (const group of groups) {
+      if (groups.length > 1) blocks.push({type:'group', text: group.recipe === m ? `Ana tarif · ${group.recipe.name}` : `Eşlikçi · ${group.recipe.name}`});
+      for (const row of group.rows) blocks.push({type:'item', text:ingredientText(row.item, row.recipe, count)});
+    }
+    // Kişi başı 1 kaynak porsiyonu varsayıldığı için kişi başı değer
+    // kaynağın porsiyon değeridir; kişi sayısıyla çarpılmaz. Eşlikçilerin
+    // kalorisi kaynaklarda yok, o yüzden toplanmaz.
+    const onlyMain = groups.length > 1 ? ' (yalnızca ana tarif)' : '';
+    blocks.push({type:'cal', text: Number.isFinite(m.cal) ? `Kişi başı ≈ ${m.cal.toLocaleString('tr-TR')} kcal${onlyMain}` : 'Kişi başı kalori bilinmiyor'});
+  }
+  blocks.push({type:'foot', text:'Ne Pişse?'});
+  return blocks;
 }
 async function shareCard() {
   if (!current || $('#share').disabled) return;
@@ -407,13 +479,35 @@ async function shareCard() {
   try {
     const canvas = document.createElement('canvas'), ctx = canvas.getContext('2d');
     if (!ctx) throw new Error('Canvas unavailable');
-    canvas.width = 1080; ctx.font = '32px system-ui';
-    const sections = shareLines(meal, count).map(text => wrapLines(ctx, text, 820));
-    canvas.height = Math.max(1080, 220 + sections.reduce((n, lines) => n + lines.length * 48 + 34, 0));
-    ctx.fillStyle = '#F1ECD8'; ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle = '#8E342B'; ctx.fillRect(60,60,960,canvas.height-120);
-    ctx.fillStyle = '#F1ECD8'; ctx.font = '32px system-ui'; let y = 130;
-    for (const lines of sections) { for (const line of lines) { ctx.fillText(line, 120, y); y += 48; } y += 34; }
+    // Lora/Inter yüklenmeden ölçersek satır genişliği yanlış çıkar.
+    try { await document.fonts?.ready; } catch { /* font API yoksa varsayılanla çiz */ }
+    canvas.width = SHARE.width;
+    const inner = SHARE.width - SHARE.pad * 2;
+    let height = SHARE.pad;
+    const measured = shareBlocks(meal, count).map(block => {
+      const style = SHARE_STYLES[block.type];
+      ctx.font = style.font;
+      const lines = wrapLines(ctx, block.text, inner - (style.indent || 0));
+      height += style.before + lines.length * style.lineHeight + style.after;
+      return {...block, style, lines};
+    });
+    canvas.height = Math.max(720, Math.round(height + SHARE.pad));
+    ctx.fillStyle = SHARE.ground; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = SHARE.card; ctx.fillRect(40, 40, canvas.width - 80, canvas.height - 80);
+    let y = SHARE.pad;
+    for (const block of measured) {
+      const {style} = block;
+      y += style.before;
+      if (style.ruleBefore) { ctx.fillStyle = SHARE.line; ctx.fillRect(SHARE.pad, y - 18, inner, 2); }
+      ctx.font = style.font; ctx.fillStyle = style.color;
+      for (const [index, line] of block.lines.entries()) {
+        y += style.lineHeight;
+        if (style.bullet && index === 0) { ctx.fillStyle = SHARE.accent; ctx.fillRect(SHARE.pad, y - 14, 12, 12); ctx.fillStyle = style.color; }
+        ctx.fillText(line, SHARE.pad + (style.indent || 0), y);
+      }
+      if (style.ruleAfter) { ctx.fillStyle = SHARE.line; ctx.fillRect(SHARE.pad, y + 20, inner, 2); }
+      y += style.after;
+    }
     const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
     if (!blob) throw new Error('PNG unavailable');
     const file = new File([blob], `ne-pisse-${meal.id}.png`, {type:'image/png'});

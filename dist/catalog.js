@@ -58,7 +58,7 @@ const meals = [
         "unit": "yemek kaşığı",
         "name": "sıvı yağ"
       },
-      "sıcak su (kaynak miktar belirtmiyor)"
+      "sıcak su (ölçüsü kaynakta yok)"
     ],
     "source": "https://yemek.com/tarif/lokanta-usulu-tavuk-sote/",
     "checkedAt": "2026-09-09"
@@ -665,7 +665,7 @@ const meals = [
         "unit": "çay kaşığı",
         "name": "kuru nane"
       },
-      "mantıyı haşlamak için tuzlu su (kaynak miktar belirtmiyor)"
+      "mantıyı haşlamak için tuzlu su (ölçüsü kaynakta yok)"
     ],
     "source": "https://yemek.com/tarif/manti-3/",
     "checkedAt": "2026-09-07"
@@ -2672,7 +2672,7 @@ const meals = [
     "yieldLabel": "4 kişilik",
     "extraPrep": true,
     "note": "Süre ve kalori kaynak tarifin yaklaşık değeridir; kullanılan malzeme ve ekipmana göre değişebilir.",
-    "waitLabel": "Başlıktaki 30 dk hazırlık + 20 dk pişirmeye ek olarak en az 30 dk hamur mayası ve 15–20 dk köfte dinlendirme gerekir; toplam yaklaşık 95–100 dk",
+    "waitLabel": "En az 30 dk hamur mayası ve 15–20 dk köfte dinlendirme gerekir; toplam yaklaşık 95–100 dk",
     "checkedAt": "2026-09-08"
   },
   {
@@ -5470,10 +5470,9 @@ const meals = [
       {
         "amount": 0.25,
         "unit": "çay bardağı",
-        "name": "zeytinyağı (malzeme listesinde kekiği ısıtmak için)"
+        "name": "zeytinyağı (kekiği ısıtmak için)"
       },
-      "yemeğin üzerini geçecek kadar sıcak su (kaynak miktar belirtmiyor)",
-      "not: yapılışta kekik zeytinyağı yerine tereyağıyla kavruluyor"
+      "yemeğin üzerini geçecek kadar sıcak su"
     ],
     "source": "https://yemek.com/tarif/orman-kebabi/",
     "yieldPeople": 7,
@@ -5859,7 +5858,7 @@ const meals = [
     "yieldLabel": "4 kişilik",
     "extraPrep": false,
     "note": "Süre ve kalori kaynak tarifin yaklaşık değeridir; kullanılan malzeme ve ekipmana göre değişebilir.",
-    "waitLabel": "Malzeme listesi patatesleri önceden haşlanmış ister; bu ön hazırlık başlık süresine dahil olmayabilir",
+    "waitLabel": "Patatesler önceden haşlanmış isteniyor; bu süre dahil olmayabilir",
     "checkedAt": "2026-09-08"
   },
   {
@@ -8197,7 +8196,7 @@ const meals = [
     "yieldLabel": "8 kişilik",
     "extraPrep": true,
     "note": "Süre ve kalori kaynak tarifin yaklaşık değeridir; kullanılan malzeme ve ekipmana göre değişebilir.",
-    "waitLabel": "Bezelye haşlanmış isteniyor ve tavuk suyu ayrıca hazırlanıyor; bu ön hazırlıkların süresi kaynak başlığında net değil",
+    "waitLabel": "Bezelye haşlanmış, tavuk suyu hazır isteniyor; bu ön hazırlığın süresi belirsiz",
     "checkedAt": "2026-09-08"
   },
   {
@@ -8762,7 +8761,7 @@ const meals = [
     "yieldLabel": "10 adet",
     "extraPrep": true,
     "note": "Süre ve kalori kaynak tarifin yaklaşık değeridir; kullanılan malzeme ve ekipmana göre değişebilir.",
-    "waitLabel": "Oyulan patlıcanlar acısının çıkması için 20 dakika bekletiliyor; kaynak başlığının bunu kapsayıp kapsamadığı net değil",
+    "waitLabel": "Oyulan patlıcanlar acısı çıksın diye 20 dakika bekletilir; süreye dahil olmayabilir",
     "checkedAt": "2026-09-08"
   },
   {
@@ -9221,7 +9220,7 @@ const meals = [
     "yieldLabel": "4 kişilik",
     "extraPrep": true,
     "note": "Süre ve kalori kaynak tarifin yaklaşık değeridir; kullanılan malzeme ve ekipmana göre değişebilir.",
-    "waitLabel": "Köfte harcı buzdolabında süresi belirtilmeden dinlendiriliyor ve önceden kızartılıyor; kaynak başlığındaki 30 dakika pişirme, adımlardaki iki fırın aşamasıyla da uyuşmuyor",
+    "waitLabel": "Köfte harcı süresi belirtilmeden dinlendiriliyor ve önceden kızartılıyor; toplam süre kesin değil",
     "checkedAt": "2026-09-08"
   },
   {
@@ -9795,7 +9794,7 @@ const meals = [
     "yieldLabel": "4 kişilik",
     "extraPrep": true,
     "note": "Süre ve kalori kaynak tarifin yaklaşık değeridir; kullanılan malzeme ve ekipmana göre değişebilir.",
-    "waitLabel": "Kaynak su miktarını ve kuru börülcenin kesin yumuşama süresini vermiyor; pişme süresi bakliyatın cinsine göre değişebilir",
+    "waitLabel": "Kuru börülcenin yumuşama süresi belirsiz; bakliyatın cinsine göre değişir",
     "checkedAt": "2026-09-08"
   },
   {
@@ -9856,7 +9855,7 @@ const meals = [
     "yieldLabel": "2 kişilik",
     "extraPrep": true,
     "note": "Süre ve kalori kaynak tarifin yaklaşık değeridir; kullanılan malzeme ve ekipmana göre değişebilir.",
-    "waitLabel": "Maş fasulyesi ayrıca 15 dakika ön haşlanıyor; sonraki pişirme aşamasının süresi kaynak adımlarında net değil",
+    "waitLabel": "Maş fasulyesi 15 dakika ön haşlanıyor; sonraki pişirme süresi belirsiz",
     "checkedAt": "2026-09-08"
   },
   {
@@ -9941,7 +9940,7 @@ const meals = [
     "yieldLabel": "6 kişilik",
     "extraPrep": true,
     "note": "Süre ve kalori kaynak tarifin yaklaşık değeridir; kullanılan malzeme ve ekipmana göre değişebilir.",
-    "waitLabel": "Fasulyeler geceden ıslatılıyor; fasulye ve etin ayrı haşlama süreleri kaynak adımlarında belirtilmiyor",
+    "waitLabel": "Fasulyeler geceden ıslatılıyor; haşlama süreleri belirsiz",
     "checkedAt": "2026-09-08"
   },
   {
@@ -11557,18 +11556,61 @@ const meals = [
     "name": "Kalamar Tava",
     "mode": "Fast Food / Kaçamak",
     "subcategory": "Kızarmış",
-    "status": "idea",
-    "variant": null,
-    "time": null,
-    "prep": null,
-    "cook": null,
-    "cal": null,
-    "ingredients": [],
-    "source": null,
-    "yieldPeople": null,
-    "yieldLabel": null,
-    "extraPrep": false,
-    "note": "Bu yemek yalnızca fikir olarak listeleniyor. Süre, kalori ve malzemeleri henüz doğrulanmadı."
+    "status": "sourced",
+    "variant": "Maden sulu çıtır kalamar",
+    "time": 45,
+    "prep": 30,
+    "cook": 15,
+    "cal": 315,
+    "ingredients": [
+      {
+        "amount": 300,
+        "unit": "gram",
+        "name": "kalamar"
+      },
+      {
+        "amount": 1,
+        "unit": "adet",
+        "name": "limon (suyu için)"
+      },
+      {
+        "amount": 1,
+        "unit": "şişe",
+        "name": "maden suyu (şişe hacmi belirsiz)"
+      },
+      {
+        "amount": 1,
+        "unit": "tatlı kaşığı",
+        "name": "toz şeker"
+      },
+      {
+        "amount": 1,
+        "unit": "çay kaşığı",
+        "name": "karbonat"
+      },
+      {
+        "amount": 0.5,
+        "unit": "su bardağı",
+        "name": "un"
+      },
+      {
+        "amount": 1,
+        "unit": "çay kaşığı",
+        "name": "tuz"
+      },
+      {
+        "amount": 0.5,
+        "unit": "su bardağı",
+        "name": "sıvı yağ (kızartmak için)"
+      }
+    ],
+    "source": "https://yemek.com/tarif/kalamar/",
+    "yieldPeople": 2,
+    "yieldLabel": "2 kişilik",
+    "extraPrep": true,
+    "note": "Altı adımın tamamı görüldü; listedeki her malzeme adımlarda kullanılıyor. Kaynak servis için tarator sos öneriyor, sos malzeme listesinde yok ve ayrı bir tariftir. Kalori kaynağın 1 porsiyon için verdiği değerdir.",
+    "waitLabel": "En az 3 saat buzdolabında dinlendirme gerekir; kaynağın 45 dakikasına dahil değil",
+    "checkedAt": "2026-09-12"
   },
   {
     "id": "meal-184",
@@ -11660,18 +11702,71 @@ const meals = [
     "name": "Noodle",
     "mode": "Dünya Mutfağı",
     "subcategory": "Asya",
-    "status": "idea",
-    "variant": null,
-    "time": null,
-    "prep": null,
-    "cook": null,
+    "status": "sourced",
+    "variant": "Tavuklu sebzeli noodle",
+    "time": 25,
+    "prep": 10,
+    "cook": 15,
     "cal": null,
-    "ingredients": [],
-    "source": null,
-    "yieldPeople": null,
-    "yieldLabel": null,
+    "ingredients": [
+      {
+        "amount": 220,
+        "unit": "gram",
+        "name": "noodle (4 parça)"
+      },
+      {
+        "amount": 400,
+        "unit": "gram",
+        "name": "tavuk göğsü"
+      },
+      {
+        "amount": 1,
+        "unit": "adet",
+        "name": "kuru soğan"
+      },
+      {
+        "amount": 1,
+        "unit": "adet",
+        "name": "kırmızı biber"
+      },
+      {
+        "amount": 1,
+        "unit": "adet",
+        "name": "havuç"
+      },
+      {
+        "amount": 1,
+        "unit": "adet",
+        "name": "kabak"
+      },
+      {
+        "amount": 62.5,
+        "unit": "mililitre",
+        "name": "soya sosu"
+      },
+      {
+        "amount": 4,
+        "unit": "yemek kaşığı",
+        "name": "zeytinyağı"
+      },
+      {
+        "amount": 2,
+        "unit": "yemek kaşığı",
+        "name": "susam"
+      },
+      {
+        "amount": 1,
+        "unit": "litre",
+        "name": "sıcak su"
+      }
+    ],
+    "source": "https://www.nefisyemektarifleri.com/tavuklu-sebzeli-noodle-tarifi/",
+    "yieldPeople": 4,
+    "yieldLabel": "4-6 kişilik (alt sınır alındı)",
     "extraPrep": false,
-    "note": "Bu yemek yalnızca fikir olarak listeleniyor. Süre, kalori ve malzemeleri henüz doğrulanmadı."
+    "note": "Yedi adımın tamamı görüldü; listedeki malzemelerin hepsi adımlarda kullanılıyor, adımlarda listede olmayan malzeme yok. Kaynak 4-6 kişilik diyor, alt sınır 4 alındı. Soya sosu kaynakta hem yarım çay bardağı hem 62,5 ml olarak verilmiş, mililitre yazıldı. Kaynak kalori vermiyor.",
+    "waitLabel": null,
+    "checkedAt": "2026-09-12"
   },
   {
     "id": "meal-189",
@@ -11783,18 +11878,65 @@ const meals = [
     "name": "Tempura",
     "mode": "Dünya Mutfağı",
     "subcategory": "Asya",
-    "status": "idea",
-    "variant": null,
-    "time": null,
-    "prep": null,
-    "cook": null,
-    "cal": null,
-    "ingredients": [],
-    "source": null,
-    "yieldPeople": null,
-    "yieldLabel": null,
+    "status": "sourced",
+    "variant": "Karides tempura (dinamit sosla)",
+    "time": 20,
+    "prep": 10,
+    "cook": 10,
+    "cal": 285,
+    "ingredients": [
+      {
+        "amount": 250,
+        "unit": "gram",
+        "name": "karides"
+      },
+      {
+        "amount": 100,
+        "unit": "gram",
+        "name": "un"
+      },
+      {
+        "amount": 25,
+        "unit": "gram",
+        "name": "mısır nişastası"
+      },
+      {
+        "amount": 1,
+        "unit": "çay kaşığı ucu",
+        "name": "kabartma tozu"
+      },
+      {
+        "amount": 0.5,
+        "unit": "şişe",
+        "name": "maden suyu (şişe hacmi belirsiz)"
+      },
+      {
+        "amount": 2,
+        "unit": "yemek kaşığı",
+        "name": "mayonez"
+      },
+      {
+        "amount": 1,
+        "unit": "yemek kaşığı",
+        "name": "sriracha ya da acı sos"
+      },
+      {
+        "amount": 1,
+        "unit": "tatlı kaşığı",
+        "name": "susam"
+      },
+      "tuz (ölçüsü kaynakta yok)",
+      "karabiber (ölçüsü kaynakta yok)",
+      "kızartmak için sıvı yağ (ölçüsü kaynakta yok)",
+      "taze soğan (servis için, ölçüsü kaynakta yok)"
+    ],
+    "source": "https://yemek.com/tarif/karides-tempura/",
+    "yieldPeople": 2,
+    "yieldLabel": "2 kişilik",
     "extraPrep": false,
-    "note": "Bu yemek yalnızca fikir olarak listeleniyor. Süre, kalori ve malzemeleri henüz doğrulanmadı."
+    "note": "Sekiz adımın tamamı görüldü. Kaynak adımlarda tuz, karabiber ve kızartma yağı kullanıyor ama malzeme listesinde vermiyor; üçü de ölçüsüz olarak eklendi, miktar uydurulmadı. Servis için taze soğan yalnızca son adımda geçiyor. Maden suyu \"yarım şişe\" olarak veriliyor, şişe hacmi belirtilmemiş. Kalori kaynağın 1 porsiyon için verdiği değerdir.",
+    "waitLabel": null,
+    "checkedAt": "2026-09-12"
   },
   {
     "id": "meal-196",
@@ -11819,18 +11961,112 @@ const meals = [
     "name": "Pho",
     "mode": "Dünya Mutfağı",
     "subcategory": "Asya",
-    "status": "idea",
-    "variant": null,
-    "time": null,
-    "prep": null,
-    "cook": null,
+    "status": "sourced",
+    "variant": "Vietnam usulü tavuklu pho",
+    "time": 105,
+    "prep": 15,
+    "cook": 90,
     "cal": null,
-    "ingredients": [],
-    "source": null,
-    "yieldPeople": null,
-    "yieldLabel": null,
+    "ingredients": [
+      {
+        "amount": 1,
+        "unit": "yemek kaşığı",
+        "name": "bitkisel yağ (kanola ya da nötr yağ)"
+      },
+      {
+        "amount": 2,
+        "unit": "adet",
+        "name": "soğan (ikiye bölünmüş, kabuklu)"
+      },
+      {
+        "amount": 5,
+        "unit": "santimetre",
+        "name": "taze zencefil (dilimlenmiş, kabuklu)"
+      },
+      {
+        "amount": 2,
+        "unit": "litre",
+        "name": "su"
+      },
+      {
+        "amount": 1.5,
+        "unit": "kilogram",
+        "name": "kemikli ve derili tavuk"
+      },
+      {
+        "amount": 1,
+        "unit": "küçük demet",
+        "name": "kişniş"
+      },
+      {
+        "amount": 2,
+        "unit": "adet",
+        "name": "yıldız anason"
+      },
+      {
+        "amount": 1,
+        "unit": "adet",
+        "name": "tarçın çubuğu"
+      },
+      {
+        "amount": 4,
+        "unit": "adet",
+        "name": "karanfil"
+      },
+      {
+        "amount": 2,
+        "unit": "tatlı kaşığı",
+        "name": "rezene tohumu"
+      },
+      {
+        "amount": 2,
+        "unit": "tatlı kaşığı",
+        "name": "kişniş tohumu"
+      },
+      {
+        "amount": 3,
+        "unit": "tatlı kaşığı",
+        "name": "beyaz şeker"
+      },
+      {
+        "amount": 0.75,
+        "unit": "tatlı kaşığı",
+        "name": "tuz"
+      },
+      {
+        "amount": 360,
+        "unit": "gram",
+        "name": "ince pirinç eriştesi"
+      },
+      {
+        "amount": 2,
+        "unit": "adet",
+        "name": "taze soğan sapı (ince doğranmış)"
+      },
+      {
+        "amount": 3,
+        "unit": "su bardağı",
+        "name": "fasulye filizi"
+      },
+      {
+        "amount": 1,
+        "unit": "küçük demet",
+        "name": "tay fesleğeni, nane ve kişniş (karışık)"
+      },
+      {
+        "amount": 2,
+        "unit": "adet",
+        "name": "lime (dörde bölünmüş)"
+      },
+      "kırmızı biber (isteğe bağlı, ölçüsü kaynakta yok)"
+    ],
+    "source": "https://www.nefisyemektarifleri.com/vietnamese-tavuklu-pho/",
+    "yieldPeople": 6,
+    "yieldLabel": "6-8 kişilik (alt sınır alındı)",
     "extraPrep": false,
-    "note": "Bu yemek yalnızca fikir olarak listeleniyor. Süre, kalori ve malzemeleri henüz doğrulanmadı."
+    "note": "On yedi adımın tamamı görüldü; çorba suyu malzemeleri adımda topluca ekleniyor, tuz ayrı adımda veriliyor, üst malzemeler sunum adımlarında tek tek anılıyor. 1,5 saatlik kaynatma kaynağın verdiği pişirme süresine dahildir, ayrıca bekleme yok. Kaynak 6-8 kişilik diyor, alt sınır 6 alındı. Kaynağın verdiği 600 g taze erişte alternatifi yazılmadı. Kaynak kalori vermiyor.",
+    "waitLabel": null,
+    "checkedAt": "2026-09-12"
   },
   {
     "id": "meal-198",
@@ -11870,7 +12106,7 @@ const meals = [
       {"amount": 1, "unit": "yemek kaşığı", "name": "sirke"},
       {"amount": 2, "unit": "diş", "name": "sarımsak"},
       {"amount": 1, "unit": "tutam", "name": "tuz"},
-      "toz şeker (kaynak \u0022çay kaşığı ucu\u0022 diyor; sayısal ölçü vermiyor)"
+      "toz şeker (çay kaşığı ucu, ölçüsü kaynakta yok)"
     ],
     "source": "https://yemek.com/tarif/saksuka-7/",
     "yieldPeople": 4,
@@ -12004,18 +12240,117 @@ const meals = [
     "name": "Nachos",
     "mode": "Dünya Mutfağı",
     "subcategory": "Meksika",
-    "status": "idea",
-    "variant": null,
-    "time": null,
-    "prep": null,
-    "cook": null,
+    "status": "sourced",
+    "variant": "Kıymalı nachos (guacamole ve peynir soslu)",
+    "time": 40,
+    "prep": 15,
+    "cook": 25,
     "cal": null,
-    "ingredients": [],
-    "source": null,
-    "yieldPeople": null,
-    "yieldLabel": null,
+    "ingredients": [
+      "1 paket nachos / mısır cipsi (gramajı kaynakta yok)",
+      {
+        "amount": 300,
+        "unit": "gram",
+        "name": "kıyma"
+      },
+      {
+        "amount": 1,
+        "unit": "adet",
+        "name": "ufak doğranmış kuru soğan"
+      },
+      {
+        "amount": 4,
+        "unit": "yemek kaşığı",
+        "name": "sıvı yağ"
+      },
+      {
+        "amount": 1,
+        "unit": "su bardağı",
+        "name": "Meksika fasulyesi (konserve)"
+      },
+      {
+        "amount": 1,
+        "unit": "çay kaşığı",
+        "name": "karabiber"
+      },
+      {
+        "amount": 1.5,
+        "unit": "çay kaşığı",
+        "name": "tuz"
+      },
+      {
+        "amount": 2,
+        "unit": "dal",
+        "name": "kişniş yaprağı (kıyılmış)"
+      },
+      {
+        "amount": 1,
+        "unit": "adet",
+        "name": "avokado"
+      },
+      {
+        "amount": 1,
+        "unit": "adet",
+        "name": "küçük boy domates"
+      },
+      {
+        "amount": 0.5,
+        "unit": "adet",
+        "name": "mor soğan"
+      },
+      {
+        "amount": 0.5,
+        "unit": "adet",
+        "name": "sarımsak (ezilmiş)"
+      },
+      {
+        "amount": 0.5,
+        "unit": "adet",
+        "name": "lime ya da limon (suyu için)"
+      },
+      {
+        "amount": 0.25,
+        "unit": "çay kaşığı",
+        "name": "tuz (guacamole için)"
+      },
+      {
+        "amount": 1,
+        "unit": "tutam",
+        "name": "karabiber (guacamole için)"
+      },
+      {
+        "amount": 1,
+        "unit": "yemek kaşığı",
+        "name": "tereyağı"
+      },
+      {
+        "amount": 1,
+        "unit": "yemek kaşığı",
+        "name": "un"
+      },
+      {
+        "amount": 2,
+        "unit": "su bardağı",
+        "name": "süt"
+      },
+      {
+        "amount": 100,
+        "unit": "gram",
+        "name": "cheddar peyniri"
+      },
+      {
+        "amount": 100,
+        "unit": "gram",
+        "name": "mozarella peyniri"
+      }
+    ],
+    "source": "https://yemek.com/tarif/nachos/",
+    "yieldPeople": 4,
+    "yieldLabel": "4 kişilik",
     "extraPrep": false,
-    "note": "Bu yemek yalnızca fikir olarak listeleniyor. Süre, kalori ve malzemeleri henüz doğrulanmadı."
+    "note": "On adımın tamamı görüldü. Guacamole için listelenen 1/4 çay kaşığı tuz ile 1 tutam karabiber adımlarda ayrıca anılmıyor; diğer bütün malzemeler adımlarda kullanılıyor. Kişniş kaynakta 2-3 dal aralığı olarak verilmiş, alt sınır yazıldı. Cips miktarı \"paket\" olarak veriliyor, gramaj yok. Kaynak kalori vermiyor.",
+    "waitLabel": null,
+    "checkedAt": "2026-09-12"
   },
   {
     "id": "meal-207",
@@ -12116,18 +12451,81 @@ const meals = [
     "name": "Meksika Pilavı",
     "mode": "Dünya Mutfağı",
     "subcategory": "Meksika",
-    "status": "idea",
-    "variant": null,
-    "time": null,
-    "prep": null,
-    "cook": null,
+    "status": "sourced",
+    "variant": "Bezelyeli ve havuçlu Meksika pilavı",
+    "time": 25,
+    "prep": 10,
+    "cook": 15,
     "cal": null,
-    "ingredients": [],
-    "source": null,
-    "yieldPeople": null,
-    "yieldLabel": null,
+    "ingredients": [
+      {
+        "amount": 2,
+        "unit": "su bardağı",
+        "name": "uzun taneli pirinç"
+      },
+      {
+        "amount": 1,
+        "unit": "adet",
+        "name": "küçük kuru soğan"
+      },
+      {
+        "amount": 3,
+        "unit": "diş",
+        "name": "sarımsak"
+      },
+      {
+        "amount": 2,
+        "unit": "adet",
+        "name": "küçük havuç"
+      },
+      {
+        "amount": 1,
+        "unit": "su bardağı",
+        "name": "dondurulmuş bezelye"
+      },
+      {
+        "amount": 1,
+        "unit": "su bardağı",
+        "name": "domates sosu"
+      },
+      {
+        "amount": 3,
+        "unit": "çorba kaşığı",
+        "name": "tereyağı"
+      },
+      {
+        "amount": 3.5,
+        "unit": "su bardağı",
+        "name": "tavuk suyu"
+      },
+      {
+        "amount": 1,
+        "unit": "tatlı kaşığı",
+        "name": "tuz"
+      },
+      {
+        "amount": 1,
+        "unit": "tatlı kaşığı",
+        "name": "kimyon"
+      },
+      {
+        "amount": 1,
+        "unit": "çay kaşığı",
+        "name": "toz kırmızı biber"
+      },
+      {
+        "amount": 1,
+        "unit": "çay kaşığı",
+        "name": "karabiber"
+      }
+    ],
+    "source": "https://www.nefisyemektarifleri.com/meksika-pilavi/",
+    "yieldPeople": 6,
+    "yieldLabel": "6-8 kişilik (alt sınır alındı)",
     "extraPrep": false,
-    "note": "Bu yemek yalnızca fikir olarak listeleniyor. Süre, kalori ve malzemeleri henüz doğrulanmadı."
+    "note": "Dört adımın tamamı görüldü; baharatlar adımda topluca (\"baharatı ekleyelim\") anılıyor, listedeki her malzeme adımlarda karşılığını buluyor. Kaynak 6-8 kişilik diyor, alt sınır 6 alındı. Kaynak kalori vermiyor.",
+    "waitLabel": null,
+    "checkedAt": "2026-09-12"
   },
   {
     "id": "meal-212",

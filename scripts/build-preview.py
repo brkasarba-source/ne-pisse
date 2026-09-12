@@ -1,4 +1,4 @@
-import re, sys
+import base64, os.path, re, sys
 
 DIST = 'dist'
 OUT  = 'ne-pisse-onizleme.html'
@@ -28,6 +28,22 @@ else:
 while end < len(app) and app[end] in ');\n':
     end += 1
 app = app[:i] + '/* service worker: onizlemede devre disi */\n' + app[end:]
+
+# Fontlar tek dosyalik onizlemede yan yana durmaz; goreli url(fonts/...) yolu
+# cozulmez ve tipografi Georgia'ya duserdi. Onizlemenin amaci tasarimi
+# gostermek oldugu icin woff2 dosyalari data URI olarak gomulur.
+def embed_font(match):
+    rel = match.group(1)
+    path = os.path.join(DIST, rel)
+    if not os.path.exists(path):
+        sys.exit(f'onizleme icin font bulunamadi: {path}')
+    with open(path, 'rb') as f:
+        data = base64.b64encode(f.read()).decode('ascii')
+    return f"url(data:font/woff2;base64,{data})"
+
+css, embedded = re.subn(r'url\((fonts/[^)]+\.woff2)\)', embed_font, css)
+if embedded == 0:
+    sys.exit('style.css icinde gomulecek font bulunamadi - yol degismis olabilir')
 
 html = re.sub(r'<link rel="stylesheet" href="style\.css[^"]*"\s*/?>',
               lambda m: f'<style>{css}</style>', html)
