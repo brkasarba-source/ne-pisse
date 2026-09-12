@@ -13,7 +13,8 @@ GitHub güncellemeleri mevcut Sites yayınını otomatik değiştirmez.
 - İkinci turda 3 tarif daha: Gerçek Gavurdağı Salata (Hafif, 4 kişilik), Tulum Peynirli Roka Salatası (Hafif, 2 kişilik), Şakşuka (Dünya Mutfağı, 4 kişilik).
 - Soğan Halkası (Fast Food/Kaçamak, 4 kişilik, batchLimited) tam sayfa çekilerek doğrulandı ve eklendi.
 - Zayıf kategori durumu: Hafif 28/46, Kahvaltı 11/25, Fast Food/Kaçamak 11/30, Dünya Mutfağı 12/38.
-- Önbellek sürümü v31 → v32 (`sw.js` ve `index.html`'deki `?v=` sorgu dizesi).
+- "Bu akşamı seç"e basınca sayfa yemek kartına yumuşak şekilde kayıyor (`revealCard()`). "Başka yemek" kaydırmaz, çünkü o düğme zaten kartın içinde. `prefers-reduced-motion` açıksa kaydırma ani yapılır. Davranış testle sabitlendi.
+- Önbellek sürümü v31 → v33 (`sw.js` ve `index.html`'deki `?v=` sorgu dizesi).
 - Tek dosyalık önizleme artık `python3 scripts/build-preview.py` ile üretiliyor. Script service worker bloğunu parantez eşleştirerek çıkarır (regex ile kesmek bloğun içindeki `;` yüzünden sözdizimini bozuyordu) ve yazmadan önce her inline script'i `node --check` ile doğrular. Üretilen `ne-pisse-onizleme.html` `.gitignore`'da.
 
 ## Bu turda reddedilen kaynaklar (tekrar aranacak)

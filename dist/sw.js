@@ -1,4 +1,4 @@
-const CACHE = 'ne-pisse-v32';
+const CACHE = 'ne-pisse-v33';
 const ASSETS = ['./', 'index.html', 'style.css', 'catalog.js', 'app.js', 'manifest.webmanifest', 'icons/icon.svg', 'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png'];
 self.addEventListener('install', event => event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting())));
 self.addEventListener('activate', event => event.waitUntil(caches.keys()

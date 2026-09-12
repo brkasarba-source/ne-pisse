@@ -337,12 +337,24 @@ $('#buildMenu').onclick = () => {
   }
   renderMenu();
 };
-function pick() {
+function pick(scrollToCard = false) {
   const list = eligible();
   if (!list.length) { updateStatus(); toast('Yeni seçenek kalmadı. Filtreyi değiştirin veya gösterilenleri yeniden dahil edin.'); return; }
   // Synchronous selection: no queued timer can overwrite a newer choice or filter.
   showMeal(list[Math.floor(Math.random()*list.length)]);
   const wheel = $('#wheel'); wheel.classList.remove('spinning'); void wheel.offsetWidth; wheel.classList.add('spinning');
+  if (scrollToCard) revealCard();
+}
+
+// Bring the freshly chosen meal card into view. Guarded because the test DOM
+// stub has no scrollIntoView, and honours the reduced-motion preference.
+function revealCard() {
+  const card = $('#mealCard');
+  if (!card || typeof card.scrollIntoView !== 'function') return;
+  let smooth = true;
+  try { smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { smooth = true; }
+  try { card.scrollIntoView({behavior: smooth ? 'smooth' : 'auto', block: 'start'}); }
+  catch { card.scrollIntoView(); }
 }
 let toastTimer;
 function toast(text) { clearTimeout(toastTimer); $('#toast').textContent = text; $('#toast').classList.add('show'); toastTimer = setTimeout(() => $('#toast').classList.remove('show'), 4000); }
@@ -362,7 +374,7 @@ function filtersChanged() { sessionSeen = []; renderMetrics(); updateStatus(); }
 $('#modes').onclick = e => { const button = e.target.closest('button[data-mode]'); if (!button) return; mode = button.dataset.mode; document.querySelectorAll('#modes button').forEach(b => b.classList.toggle('active', b === button)); filtersChanged(); };
 for (const id of ['time', 'calorie']) $(`#${id}`).onchange = filtersChanged;
 $('#clearTime').onclick = () => { $('#time').value = 'Infinity'; filtersChanged(); };
-$('#spin').onclick = pick; $('#again').onclick = pick;
+$('#spin').onclick = () => pick(true); $('#again').onclick = () => pick(false);
 $('#resetSeen').onclick = () => { sessionSeen = []; updateStatus(); toast('Gösterilenler tekrar dahil edildi. Son yediğiniz 5 yemek hâlâ hariç.'); };
 $('#heart').onclick = () => {
   if (!current) return;

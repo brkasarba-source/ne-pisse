@@ -152,6 +152,7 @@ function setup(storage = null, storageThrows = false) {
     setAttribute(k,v) { this.attrs[k]=v; }
     removeAttribute(k) { delete this.attrs[k]; }
     click() { this.clicked=true; return this.onclick?.(); }
+    scrollIntoView(opts) { this.scrolledIntoView=(this.scrolledIntoView||0)+1; this.lastScrollOpts=opts; }
     remove() { this.removed=true; }
     closest() { return this; }
   }
@@ -162,7 +163,7 @@ function setup(storage = null, storageThrows = false) {
   const document={querySelector:s=>{ assert(s.startsWith('#')); assert(elements[s.slice(1)], 'Missing HTML element '+s); return elements[s.slice(1)]; },querySelectorAll:()=>[],body:new Element('body'),createElement:tag=>{const e=new Element(tag); created.push(e); if(tag==='canvas'){e.getContext=()=>canvasContext;e.toBlob=cb=>cb(new Blob(['stub'],{type:'image/png'}));} return e;}};
   const navigator={}; const timers=[];
   const location={assigned:null,assign(url){this.assigned=url;},reload(){this.reloaded=true;}};
-  const context=vm.createContext({document,navigator,window:{addEventListener(){},location,prompt(label,value){this.prompted={label,value};}},localStorage:{getItem(){if(storageThrows)throw Error('denied');return storage;},setItem(k,v){if(storageThrows)throw Error('denied');storage=v;}},setTimeout:(fn)=>{timers.push(fn);return timers.length;},clearTimeout(){},Blob,File:class{constructor(parts,name,options){this.name=name;this.type=options.type;}},URL:{createObjectURL:()=> 'blob:test',revokeObjectURL(){}},console});
+  const context=vm.createContext({document,navigator,window:{addEventListener(){},location,matchMedia:query=>({matches:false,media:query}),prompt(label,value){this.prompted={label,value};}},localStorage:{getItem(){if(storageThrows)throw Error('denied');return storage;},setItem(k,v){if(storageThrows)throw Error('denied');storage=v;}},setTimeout:(fn)=>{timers.push(fn);return timers.length;},clearTimeout(){},Blob,File:class{constructor(parts,name,options){this.name=name;this.type=options.type;}},URL:{createObjectURL:()=> 'blob:test',revokeObjectURL(){}},console});
   vm.runInContext(catalog+'\n'+app,context);
   return {elements,created,navigator,context,eval:code=>vm.runInContext(code,context)};
 }
@@ -355,5 +356,19 @@ test('Every script/link/SW precache asset exists and catalog loads before app', 
   const assets=vm.runInNewContext(sw.split('self.addEventListener')[0]+'ASSETS');
   assets.forEach(asset=>assert(fs.existsSync(path.join(root,'dist',asset)),asset));
   assert(sw.includes("key.startsWith('ne-pisse-')"));
+});
+test('Spin scrolls the meal card into view; "Başka yemek" does not', () => {
+  const s = setup();
+  // "Bu akşamı seç" reveals the card, which sits below the fold on a phone.
+  s.elements.spin.click();
+  assert.equal(s.elements.mealCard.scrolledIntoView, 1);
+  assert.equal(s.elements.mealCard.lastScrollOpts.block, 'start');
+  assert.equal(s.elements.mealCard.lastScrollOpts.behavior, 'smooth');
+  // "Başka yemek" is itself inside the card, so scrolling again would be a jolt.
+  s.elements.again.click();
+  assert.equal(s.elements.mealCard.scrolledIntoView, 1);
+  // Repeated spins keep scrolling, since the user may have scrolled away.
+  s.elements.spin.click();
+  assert.equal(s.elements.mealCard.scrolledIntoView, 2);
 });
 (async()=>{for(const t of tests){await t.run();console.log('PASS',t.name);}console.log(`${tests.length} tests passed; browser rendering and native device APIs NOT tested.`);})().catch(error=>{console.error(error);process.exitCode=1;});
