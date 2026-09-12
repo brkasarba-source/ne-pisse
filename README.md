@@ -22,6 +22,19 @@ GitHub güncellemeleri mevcut Sites yayınını otomatik değiştirmez.
 - Önbellek sürümü v31 → v33 (`sw.js` ve `index.html`'deki `?v=` sorgu dizesi).
 - Tek dosyalık önizleme artık `python3 scripts/build-preview.py` ile üretiliyor. Script service worker bloğunu parantez eşleştirerek çıkarır (regex ile kesmek bloğun içindeki `;` yüzünden sözdizimini bozuyordu) ve yazmadan önce her inline script'i `node --check` ile doğrular. Üretilen `ne-pisse-onizleme.html` `.gitignore`'da.
 
+## Yayın
+
+`.github/workflows/deploy.yml` her `main` push'unda önce `npm test` çalıştırır,
+testler geçerse `dist/` klasörünü GitHub Pages'e yayınlar. Testler kırmızıysa
+yayın adımı hiç çalışmaz, yani bozuk sürüm canlıya çıkmaz.
+
+İlk kullanımdan önce depo ayarlarında **Settings → Pages → Source: GitHub
+Actions** seçilmelidir; aksi halde iş akışı izin hatası verir.
+
+Yollar göreli (`./`, `icons/...`) olduğu için uygulama alt dizinde
+(`/ne-pisse/`) sorunsuz çalışır. Özel alan adı bağlanınca `dist/` içine `CNAME`
+dosyası eklenmelidir.
+
 ## Görev listesi
 
 ### Tasarım turunda ele alınacak (biriktirildi)
