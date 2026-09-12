@@ -17,8 +17,8 @@ test('All 238 legacy rows are accounted for; no duplicate active IDs or names', 
   assert.equal(legacy.length+Object.keys(mealAliases).length+1,238);
   assert.equal(new Set(meals.map(m => m.id)).size,meals.length);
   assert.equal(new Set(meals.map(m => m.name.toLocaleLowerCase('tr-TR'))).size,meals.length);
-  assert.equal(meals.filter(m => m.status === 'sourced').length,143);
-  assert.equal(meals.filter(m => m.status === 'idea').length,92);
+  assert.equal(meals.filter(m => m.status === 'sourced').length,159);
+  assert.equal(meals.filter(m => m.status === 'idea').length,83);
   assert(!meal(190));
   Object.values(mealAliases).forEach(id => assert(meals.some(m => m.id === id)));
 });
@@ -290,15 +290,20 @@ test('Selected companions merge exact units, scale, preserve checks, and reset w
   select.value='meal-23'; select.onchange();
   assert(s.elements.ingredientsNote.textContent.includes('Mercimek Çorbası'));
   assert.equal(s.eval('selectedSides.size'),1);
-  assert.equal(s.eval('shoppingItems().filter(r => typeof r.item === "object" && r.item.name === "tereyağı" && r.item.unit === "yemek kaşığı").length'),1);
+  assert.equal(s.eval('shoppingGroups().flatMap(g => g.rows).filter(r => typeof r.item === "object" && r.item.name === "tereyağı" && r.item.unit === "yemek kaşığı").length'),1);
   s.eval('selectedSides.set("test", {...current, id:"test"})');
-  assert.equal(s.eval('shoppingItems().find(r => typeof r.item === "object" && r.item.name === "tereyağı").item.amount'), 4 * 2 / meal(19).yieldPeople * 2);
+  // Per-recipe grouping: a duplicated companion produces its own separate
+  // row rather than merging its amount into the main recipe's row.
+  assert.equal(s.eval('shoppingGroups().flatMap(g => g.rows).filter(r => typeof r.item === "object" && r.item.name === "tereyağı").length'), 2);
+  assert.equal(s.eval('shoppingGroups().flatMap(g => g.rows).find(r => typeof r.item === "object" && r.item.name === "tereyağı").item.amount'), 4 * 2 / meal(19).yieldPeople);
   s.eval('selectedSides.delete("test")');
-  const before=s.eval('shoppingItems().find(r => typeof r.item === "object" && r.item.name === "tereyağı" && r.item.unit === "yemek kaşığı").item.amount');
-  s.elements.ingredients.children[0].children[0].children[0].checked=true;
+  const before=s.eval('shoppingGroups().flatMap(g => g.rows).find(r => typeof r.item === "object" && r.item.name === "tereyağı" && r.item.unit === "yemek kaşığı").item.amount');
+  // index 0 is now the "Ana tarif · ..." heading li (added once >1 group is
+  // shown); the first real ingredient row follows it at index 1.
+  s.elements.ingredients.children[1].children[0].children[0].checked=true;
   s.elements.plus.click();
-  assert(s.elements.ingredients.children[0].children[0].children[0].checked);
-  assert.equal(s.eval('shoppingItems().find(r => typeof r.item === "object" && r.item.name === "tereyağı" && r.item.unit === "yemek kaşığı").item.amount'),before*1.5);
+  assert(s.elements.ingredients.children[1].children[0].children[0].checked);
+  assert.equal(s.eval('shoppingGroups().flatMap(g => g.rows).find(r => typeof r.item === "object" && r.item.name === "tereyağı" && r.item.unit === "yemek kaşığı").item.amount'),before*1.5);
   select.value=''; select.onchange(); assert.equal(s.eval('selectedSides.size'),0);
   assert.equal(s.elements.ingredients.children.length,meal(19).ingredients.length);
   select.value='meal-23'; select.onchange();

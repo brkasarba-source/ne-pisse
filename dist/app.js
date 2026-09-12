@@ -187,7 +187,7 @@ function renderMetrics() {
   $('#mealTime').textContent = timeText(current);
   $('#perCal').textContent = calorieText(current);
   $('#totalCal').textContent = calorieText(current, people);
-  $('#portionNote').textContent = `${people} kişi için, kişi başı 1 kaynak porsiyonu varsayılır. ${current.cal === null ? 'Kalori hesaplanamıyor.' : 'Kalori, kaynağın yaklaşık porsiyon değeridir; bağımsız besin hesabı değildir.'}`;
+  $('#portionNote').textContent = `${people} kişi için, kişi başı 1 kaynak porsiyonu varsayılır. ${current.batchLimited && people > current.yieldPeople ? `Bu tarif tek tava/tepsi kapasitesiyle sınırlı: ${current.yieldLabel} için verilen süre bu miktarda geçerli değil, parti parti pişirmeniz gerekir. ` : ''}${current.cal === null ? 'Kalori hesaplanamıyor.' : 'Kalori, kaynağın yaklaşık porsiyon değeridir; bağımsız besin hesabı değildir.'}`;
   $('#filterWarning').hidden = matchesMeal(current, filters());
 }
 function renderHeart() {
@@ -243,32 +243,45 @@ $('#copySource').onclick = async () => {
   }
 };
 const selectedSides = new Map();
-const companionIds = {'Çoban salata':'meal-141', 'Karnabahar çorbası':'meal-136', 'Mercimek çorbası':'meal-23'};
-function shoppingItems() {
-  const rows = new Map();
+function shoppingGroups() {
+  const groups = [];
   for (const recipe of [current, ...selectedSides.values()]) {
+    const rows = new Map();
     recipe.ingredients.forEach((item, index) => {
       const numeric = typeof item === 'object' && Number.isFinite(item.amount) && recipe.yieldPeople > 0;
-      const key = numeric ? JSON.stringify([item.name, item.unit]) : `${recipe.id}:${index}`;
+      const key = numeric ? `${recipe.id}:${JSON.stringify([item.name, item.unit])}` : `${recipe.id}:${index}`;
       const amount = numeric ? item.amount * people / recipe.yieldPeople : null;
       if (rows.has(key)) rows.get(key).item.amount += amount;
       else rows.set(key, {key, item: numeric ? {...item, amount} : item, recipe: numeric ? {yieldPeople:people} : recipe});
     });
+    groups.push({recipe, rows: [...rows.values()]});
   }
-  return [...rows.values()];
+  return groups;
 }
 function renderShopping() {
   $('#ingredients').shoppingCombined = true;
-  const checked = new Set(Array.from($('#ingredients').children).filter(li => li.children[0].children[0].checked).map(li => li.shoppingKey));
+  const checked = new Set(Array.from($('#ingredients').children)
+    .filter(li => li.shoppingKey && li.children[0] && li.children[0].children[0] && li.children[0].children[0].checked)
+    .map(li => li.shoppingKey));
   $('#ingredients').replaceChildren();
-  for (const row of shoppingItems()) {
-    const li = document.createElement('li'), label = document.createElement('label'), input = document.createElement('input'), span = document.createElement('span');
-    li.shoppingKey = row.key;
-    const text = ingredientText(row.item, row.recipe);
-    input.type = 'checkbox'; input.checked = checked.has(row.key); input.setAttribute('aria-label', `${text} alındı`); span.textContent = text;
-    label.append(input, span); li.append(label); $('#ingredients').append(li);
+  const groups = shoppingGroups();
+  for (const [index, group] of groups.entries()) {
+    if (groups.length > 1) {
+      const heading = document.createElement('li');
+      heading.className = 'shoppingHeading';
+      heading.textContent = index === 0 ? `Ana tarif · ${group.recipe.name}` : `Eşlikçi · ${group.recipe.name}`;
+      $('#ingredients').append(heading);
+    }
+    for (const row of group.rows) {
+      const li = document.createElement('li'), label = document.createElement('label'), input = document.createElement('input'), span = document.createElement('span');
+      li.shoppingKey = row.key;
+      const text = ingredientText(row.item, row.recipe);
+      input.type = 'checkbox'; input.checked = checked.has(row.key); input.setAttribute('aria-label', `${text} alındı`); span.textContent = text;
+      label.append(input, span); li.append(label); $('#ingredients').append(li);
+    }
   }
-  $('#ingredientsNote').textContent = `${people} kişi için: ${[current, ...selectedSides.values()].map(m => m.name).join(' + ')}. Aynı ad ve birimdeki malzemeler toplandı. Seçilmemiş öneriler dahil değil; miktarı olmayan malzemeler ölçüsüz gösterilir. Üstteki süre ve kalori yalnızca ana tarifindir.`;
+  const names = groups.map(g => g.recipe.name);
+  $('#ingredientsNote').textContent = `${people} kişi için: ${names.join(' + ')}. ${names.length > 1 ? 'Her tarifin malzemesi kendi başlığı altında ayrı listelenir; tarifler arasında toplama yapılmaz.' : 'Aynı ad ve birimdeki malzemeler toplandı.'} Seçilmemiş öneriler dahil değil; miktarı olmayan malzemeler ölçüsüz gösterilir. Üstteki süre ve kalori yalnızca ana tarifindir.`;
 }
 function renderMenu() {
   const pairing = current && menuPairings[current.id];
@@ -291,10 +304,12 @@ function renderMenu() {
     select.setAttribute('aria-label', `${category} seçimi`);
     const none = document.createElement('option'); none.value = ''; none.textContent = 'Ekleme'; select.append(none);
     for (const item of pairing.items.filter(item => item.kind === category)) {
-      const recipe = byId.get(item.catalogId || companionIds[item.name]);
+      const recipe = byId.get(item.catalogId);
       const option = document.createElement('option');
       option.value = recipe?.id || ''; option.disabled = !recipe || recipe.status !== 'sourced';
-      option.textContent = option.disabled ? `${item.name} · tarif bekleniyor` : recipe.name + (recipe.ingredients.some(x => typeof x === 'string') ? ' · malzemeler ölçüsüz' : '');
+      option.textContent = !option.disabled
+        ? recipe.name + (recipe.ingredients.some(x => typeof x === 'string') ? ' · malzemeler ölçüsüz' : '')
+        : item.purchased ? `${item.name} · hazır alınır` : `${item.name} · tarif bekleniyor`;
       select.append(option);
     }
     select.value = selectedSides.get(category)?.id || '';
@@ -308,7 +323,7 @@ function renderMenu() {
     box.append(row);
   }
   const note = document.createElement('p');
-  note.textContent = 'Her gruptan bir eşlikçi seçebilirsiniz. Seçtikleriniz alışveriş listesine eklenir. Ölçülü tarifi henüz hazır olmayanlar öneri olarak kalır. Menüyü gizlemek seçimleri kaldırmaz. Süre ve kalori yalnızca ana tarifindir.';
+  note.textContent = 'Her gruptan bir eşlikçi seçebilirsiniz. Seçtikleriniz alışveriş listesine eklenir. "Hazır alınır" yazanlar pişirilmez, markette alınır. Ölçülü tarifi henüz hazır olmayanlar öneri olarak kalır. Menüyü gizlemek seçimleri kaldırmaz. Süre ve kalori yalnızca ana tarifindir.';
   box.append(note);
   box.hidden = false;
   $('#buildMenu').textContent = 'Menüyü gizle';

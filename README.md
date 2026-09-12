@@ -3,16 +3,23 @@
 Türkçe yemek önerisi ve menü planlama PWA projesi. Statik uygulama `dist/` içindedir.
 GitHub güncellemeleri mevcut Sites yayınını otomatik değiştirmez.
 
-## Güncel durum — 11 Eylül 2026
+## Güncel durum — 12 Eylül 2026
 
-- 235 kayıt: 143 kaynakla eşleştirilmiş tarif, 92 doğrulanmamış fikir.
-- 233 eski kayıt korunur; dört eski kimlik takma adla yönlendirilir, belirsiz Kori kaydı dışarıdadır. İki yeni tatlı eklendi.
-- Kahvaltı 7'den 11 kaynaklı tarife çıktı: Çılbır, Patatesli Yumurta, Mantarlı Omlet, Yulaf Lapası eklendi (hepsi yemek.com).
-- Sade Yulaf Lapası (yemek.com) reddedildi: malzeme listesinde Hindistan cevizi şekeri ve Hindistan cevizi yağı var ama hiçbir adımda kullanılmıyor.
-- Tatlı kategorisi: Muhallebi ve Sütlü İrmik Tatlısı. Soğutma beklemeleri nedeniyle sonlu süre filtresinden çıkarılırlar.
-- `research/package-8.cjs` içindeki 5 tarif ayrı araştırma taslağıdır; uygulamaya eklenmemiştir. Bu turdaki dört kayıt tamamlanmış 20'lik paket olarak sayılmaz.
-- 1/3–2/3 sayılabilir malzeme desteği eklendi. Sarımsak beklentisi değiştirilmeden düzeldi. Küçük kaşık dönüşümleri ve ham iki basamaklı ölçüler de kontrol edildi.
-- Önbellek sürümü v25 → v26 (`sw.js` ve `index.html`'deki `?v=` sorgu dizesi).
+- 242 kayıt: 159 kaynakla eşleştirilmiş tarif, 83 doğrulanmamış fikir.
+- Zayıf kategorilere 5 yeni kaynaklı tarif eklendi: Kaşarlı Gözleme ve Sigara Böreği (Fast Food/Kaçamak), Izgara Köfte ve Izgara Jumbo Karides (Hafif), Humus Tabağı (Dünya Mutfağı). Hepsi yemek.com, kişi cinsinden porsiyon, adımlarla eşleşen ölçülü malzeme.
+- Kök dizindeki 8 yinelenen dosya (`app.js`, `catalog.js`, `index.html`, `manifest.webmanifest`, `style.css`, `sw.js`, `audit.test.cjs`, `package-8.test.cjs`) silindi — bunlar önceki bir web arayüzü yüklemesinden kalma kazayla oluşmuş kopyalardı (`vite.config.js` zaten `root:'dist'` kullanıyor). Tek kaynak artık yalnızca `dist/` (uygulama) ve `tests/` (testler).
+- Bu silme sırasında kökteki dosyaların `dist/` kopyalarından **daha güncel** olduğu görüldü (companion/`side-N` tarifleri, `batchLimited` alanı içeriyorlardı, `dist/` içermiyordu) — `dist/` bu turda kökteki güncel içerikle senkronize edildi.
+- `shoppingGroups()`'a geçişten (tarifler arası toplama kaldırılması) sonra güncellenmemiş kalan eski `shoppingItems()` testi düzeltildi; artık tarif başına ayrı satır davranışını doğruluyor.
+- İkinci turda 3 tarif daha: Gerçek Gavurdağı Salata (Hafif, 4 kişilik), Tulum Peynirli Roka Salatası (Hafif, 2 kişilik), Şakşuka (Dünya Mutfağı, 4 kişilik).
+- Soğan Halkası (Fast Food/Kaçamak, 4 kişilik, batchLimited) tam sayfa çekilerek doğrulandı ve eklendi.
+- Zayıf kategori durumu: Hafif 28/46, Kahvaltı 11/25, Fast Food/Kaçamak 11/30, Dünya Mutfağı 12/38.
+- Önbellek sürümü v31 → v32 (`sw.js` ve `index.html`'deki `?v=` sorgu dizesi).
+- Tek dosyalık önizleme artık `python3 scripts/build-preview.py` ile üretiliyor. Script service worker bloğunu parantez eşleştirerek çıkarır (regex ile kesmek bloğun içindeki `;` yüzünden sözdizimini bozuyordu) ve yazmadan önce her inline script'i `node --check` ile doğrular. Üretilen `ne-pisse-onizleme.html` `.gitignore`'da.
+
+## Bu turda reddedilen kaynaklar (tekrar aranacak)
+
+- **Tabbule Salatası** (yemek.com/tabbule-salatasi) — malzeme listesinde iki ayrı taze nane satırı var (1 demet + 4 dal), adımlarda tek kullanım görünüyor ve adımlar kesik. Tam sayfa çekilip iki nanenin de kullanıldığı doğrulanmadan eklenmeyecek.
+- **Klasik Şakşuka** (yemek.com/klasik-saksuka) — 2 kişilik sürüm; sirkenin adımlarda kullanımı doğrulanamadı. Yerine adımları tam görünen `saksuka-7` (4 kişilik) alındı.
 
 ## Çalıştırma ve kontroller
 
