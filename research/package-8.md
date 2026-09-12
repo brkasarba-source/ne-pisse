@@ -1,7 +1,13 @@
 # Ana katalog — paket 8 çalışma kaydı
 
 2026-09-09. Kullanıcı önceliği: ana önerileri tamamla, eşlikçi geliştirmelerini beklet.
-Bu dosya aday kuyruğudur; aşağıdakiler henüz kataloğa eklenmedi. Beş tarif research/package-8.cjs içinde aktarılabilir veri olarak hazırlandı; 20 tamamlanmadan yayımlanmayacak.
+Bu dosya aday kuyruğudur. Beş tarif research/package-8.cjs içinde aktarılabilir veri olarak hazırlandı.
+
+> **12 Eylül 2026 güncellemesi:** "20 tamamlanmadan yayımlanmayacak" kuralı kaldırıldı.
+> 3. oturum zaten 13 tarifi doğrudan kataloğa eklemişti, yani kural fiilen işlemiyordu;
+> doğrulanmış bir tarifi paket dolsun diye bekletmenin kullanıcıya faydası yok.
+> Aşağıdaki beş tarif (meal-3, meal-11, meal-86, meal-121, meal-151) 10. pakette
+> yayına alındı — bkz. research/package-10.cjs. Tablonun kalanı hâlâ aday kuyruğudur.
 Mevcut durum: 233 kayıt, 135 kaynak bağlantılı, 98 bekleyen. Kaynak bağlantısı tek başına eksiksizlik anlamına gelmez.
 
 ## Tamamlanan ön onarım

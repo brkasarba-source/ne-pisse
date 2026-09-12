@@ -1,4 +1,4 @@
-const CACHE = 'ne-pisse-v40';
+const CACHE = 'ne-pisse-v42';
 const ASSETS = ['./', 'index.html', 'style.css', 'catalog.js', 'app.js', 'manifest.webmanifest', 'icons/icon.svg', 'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png',
   // Fontlar onbellege alinmazsa cevrimdisi acilista arayuz Georgia'ya duser.
   'fonts/inter-latin.woff2', 'fonts/inter-latin-ext.woff2', 'fonts/lora-latin.woff2', 'fonts/lora-latin-ext.woff2', 'fonts/lora-latin-italic.woff2', 'fonts/lora-latin-ext-italic.woff2'];

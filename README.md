@@ -3,7 +3,35 @@
 Türkçe yemek önerisi ve menü planlama PWA projesi. Statik uygulama `dist/` içindedir.
 GitHub güncellemeleri mevcut Sites yayınını otomatik değiştirmez.
 
-## Güncel durum — 12 Eylül 2026
+## Güncel durum — 12 Eylül 2026, akşam (10. paket)
+
+- 244 kayıt: **181 kaynaklı**, 63 doğrulanmamış fikir. Kategoriler: Doyurucu 48/48,
+  Ev Yemeği 44/46, Hafif 29/46, Kahvaltı 15/25, Fast Food/Kaçamak 15/30,
+  Dünya Mutfağı 19/38, Tatlı 2/2, Eşlikçi 9/9.
+- **Porsiyon hatası düzeltildi.** Üç dolma kaydı (`meal-110`, `meal-111`, `meal-112`)
+  "10 adet" porsiyonunu doğrudan 10 kişi sayıyordu; kişi başı kalori ve malzeme
+  yarı yarıya yanlış çıkıyordu. Kaynaklar kişi sayısı vermediği için Lahmacun'daki
+  çözüm uygulandı: kişi başı 2 adet varsayımı `yieldLabel` ve notta açıkça yazılı,
+  kalori (kaynak kişi başına bağlamadığı için) boşaltıldı, `batchLimited` işaretlendi.
+- **Aralıklı porsiyonlarda tek kural:** kaynak "4-6 kişilik" diyorsa `yieldPeople`
+  üst sınırdır. `yieldPeople` "bu miktar en fazla kaç kişiye yeter" demektir ve süre
+  filtresi kişi sayısını buna karşı kontrol eder; alt sınır alınınca kaynak yettiğini
+  söylediği hâlde kayıt gizleniyordu. `meal-82` ortalama alıyordu (4-6 → 5), yani
+  kaynakta olmayan bir sayı; `meal-188`, `meal-197`, `meal-211` ile birlikte düzeltildi.
+- **Yedi yeni kaynaklı tarif:** Tantuni, Sosisli Sandviç, Midye Tava (Fast Food),
+  Pastırmalı Yumurta, French Toast, Chia Puding, Meyveli Yoğurt (Kahvaltı).
+  Kahvaltı %44 → %60, Fast Food %40 → %50.
+- **8. paketteki beş tarif yayına alındı** (`meal-3`, `meal-11`, `meal-86`, `meal-121`,
+  `meal-151`). "20 tamamlanmadan yayımlanmaz" kuralı kaldırıldı; doğrulanan tarif bekletilmiyor.
+- **Ölçü satırları yeniden yazıldı.** Hiçbir satırda eğik çizgi yok ("3/4 çay kaşığı"
+  telefonda "3 ya da 4" okunuyordu): kesirler yazıyla ("yarım", "çeyrek", "dörtte üç").
+  Çeyrek çay kaşığının altındaki kuru baharat "bir tutam" oluyor, sıvılar kaşıkta kalıyor.
+  Satır başına düşen "yaklaşık" kalktı; yuvarlama listenin üstünde tek cümlede yazıyor.
+  Adet/paket satırı kısaldı: "1 paket lazanya yaprağı · üçte biri kadarı".
+- Paket verisi artık `research/package-10.cjs` içinde duruyor ve test canlı katalogla
+  karşılaştırıyor; elle düzenlenirse süit kırılır.
+
+## Önceki durum — 12 Eylül 2026
 
 - 244 kayıt: 163 kaynakla eşleştirilmiş tarif, 81 doğrulanmamış fikir.
 - `meal-208` Chili Con Carne (chili-con-carne, 6 kişilik, kişi başı 480 kcal) — Meksika kolundaki ilk kaynaklı tarif. Pişirme 2 saat.
@@ -101,8 +129,10 @@ dosyası eklenmelidir.
 
 `npm ci` ardından `npm run dev`.
 
-Tek test komutu: `npm test`. Önce `tests/audit.test.cjs`, başarılıysa `tests/package-8.test.cjs` çalışır. İlk başarısızlıkta komut başarısız çıkar.
-Güncel sonuç: 26 otomatik kontrol (4'ü Çılbır/Patatesli Yumurta/Mantarlı Omlet/Yulaf Lapası'nı pinliyor) ve beş araştırma kaydının alan kontrolleri geçti.
+Tek test komutu: `npm test` → `tests/audit.test.cjs`. İlk başarısızlıkta komut başarısız çıkar.
+`tests/package-8.test.cjs` kaldırıldı: beklettiği beş tarif yayına alındığı için "kataloğa girmemiş olmalı"
+beklentisi artık yanlıştı; yerine 10. paketi canlı katalogla karşılaştıran kontrol geldi.
+Güncel sonuç: 35 otomatik kontrol geçiyor.
 Audit tarayıcı DOM taklidi kullanır; bu sonuç gerçek cihaz, kurulum veya yerel paylaşım ekranı testi değildir.
 Ek olarak Chrome önizlemesinde Tatlı seçimi, 30 dakika filtresiyle iki beklemeli tarifin elenmesi, yalnız süre sınırının kaldırılması, Muhallebi kartı, 2→3 kişi süt miktarı 500→750 ml ve kaynak bağlantısının Yemek.com'a yönlenmesi kontrol edildi. Telefon/PWA testleri açık kalır.
 

@@ -17,8 +17,8 @@ test('All 238 legacy rows are accounted for; no duplicate active IDs or names', 
   assert.equal(legacy.length+Object.keys(mealAliases).length+1,238);
   assert.equal(new Set(meals.map(m => m.id)).size,meals.length);
   assert.equal(new Set(meals.map(m => m.name.toLocaleLowerCase('tr-TR'))).size,meals.length);
-  assert.equal(meals.filter(m => m.status === 'sourced').length,169);
-  assert.equal(meals.filter(m => m.status === 'idea').length,75);
+  assert.equal(meals.filter(m => m.status === 'sourced').length,181);
+  assert.equal(meals.filter(m => m.status === 'idea').length,63);
   assert(!meal(190));
   Object.values(mealAliases).forEach(id => assert(meals.some(m => m.id === id)));
 });
@@ -93,7 +93,7 @@ test('Fifth package contains 20 sourced recipes with prerequisite work exposed',
   assert.equal(meal(81).time,110); assert.equal(meal(84).time,60);
   assert.equal(meal(89).time,90); assert(meal(89).waitLabel.includes('10 dakika'));
   assert.equal(meal(94).cal,695); assert.equal(meal(96).cal,350);
-  assert.equal(meal(86).status,'idea');
+  // meal-86 bu pakette fikirdi; 8. pakette doğrulandı, 10. pakette yayına alındı.
 });
 test('Sixth package contains 20 sourced recipes and quarantines unclear total times', () => {
   for(let id=99;id<=118;id++) {
@@ -120,7 +120,7 @@ test('Seventh package contains 20 sourced recipes and rejects weak or duplicate 
   assert.equal(meal(123).source,'https://yemek.com/tarif/firinda-kabak-mucveri/');
   assert.equal(meal(124).time,50); assert.equal(meal(138).time,90);
   assert.equal(meal(139).cal,133); assert.equal(meal(141).cal,null);
-  assert.equal(meal(121).status,'idea');
+  // meal-121 de 8. pakette doğrulanıp 10. pakette yayına alındı.
   assert.equal(meal(125).status,'idea');
   assert.equal(meal(128).status,'idea');
 });
@@ -196,28 +196,48 @@ test('Person buttons clamp 1–8 and preserve ingredient checkmarks and favorite
 test('Scaled ingredient amounts use practical kitchen measures instead of raw ratios', () => {
   const s=setup();
   const render=(amount,unit='adet',name='soğan')=>s.eval(`ingredientText(${JSON.stringify({amount,unit,name})},{yieldPeople:1},1)`);
-  assert.equal(render(0.5),'1 adet soğan al · yaklaşık yarısını kullan');
-  assert.equal(render(2/3,'diş','sarımsak'),'1 diş sarımsak al · yaklaşık 2/3’ünü kullan');
-  assert.equal(render(1/3,'diş','sarımsak'),'1 diş sarımsak al · yaklaşık 1/3’ünü kullan');
-  assert.equal(render(1/6,'adet','soğan'),'1 adet soğan al · yaklaşık %17’ini kullan');
+  // No line prints a slash: "3/4 çay kaşığı" is read as "3 or 4" at list size.
+  // No line prints "yaklaşık" either; the rounding is stated once under the
+  // list, so the rows read like a shopping note instead of a calculation.
+  assert.equal(render(0.5),'1 adet soğan · yarısı kadarı');
+  assert.equal(render(2/3,'diş','sarımsak'),'1 diş sarımsak · üçte ikisi kadarı');
+  assert.equal(render(1/3,'diş','sarımsak'),'1 diş sarımsak · üçte biri kadarı');
+  assert.equal(render(1/6,'adet','soğan'),'1 adet soğan · %15 kadarı');
   assert.equal(render(2/3,'yemek kaşığı','sıvı yağ'),'2 çay kaşığı sıvı yağ');
   assert.equal(render(2+2/3,'yemek kaşığı','toz tarhana'),'2 yemek kaşığı + 2 çay kaşığı toz tarhana');
-  assert.equal(render(2/3,'çay kaşığı','tuz'),'yaklaşık 3/4 çay kaşığı tuz');
-  assert.equal(render(0.4,'su bardağı','su'),'yaklaşık 80 ml su');
-  assert.equal(render(0.375,'su bardağı','su'),'yaklaşık 75 ml su');
-  assert.equal(render(0.8,'su bardağı','su'),'yaklaşık 160 ml su');
+  assert.equal(render(2/3,'çay kaşığı','tuz'),'dörtte üç çay kaşığı tuz');
+  assert.equal(render(0.5,'çay kaşığı','tuz'),'yarım çay kaşığı tuz');
+  // Under a quarter teaspoon the honest measure is the one a hand makes.
+  assert.equal(render(0.15,'çay kaşığı','nane'),'bir tutam nane');
+  // ...but a pinch of oil is nonsense, so liquids keep the spoon.
+  assert.equal(render(0.15,'çay kaşığı','zeytinyağı'),'çeyrek çay kaşığı zeytinyağı');
+  assert.equal(render(0.4,'su bardağı','su'),'80 ml su');
+  assert.equal(render(0.375,'su bardağı','su'),'75 ml su');
+  assert.equal(render(0.5,'su bardağı','süt'),'yarım su bardağı süt (100 ml)');
+  assert.equal(render(0.8,'su bardağı','su'),'160 ml su');
   assert.equal(render(1.5,'yemek kaşığı','salça'),'1,5 yemek kaşığı salça');
-  assert.equal(render(1.8,'çay kaşığı','tuz'),'yaklaşık 2 çay kaşığı tuz');
-  assert.equal(render(0.1875,'demet','maydanoz'),"1 demet maydanoz al · yaklaşık %20'sini kullan");
+  assert.equal(render(1.8,'çay kaşığı','tuz'),'2 çay kaşığı tuz');
+  assert.equal(render(0.1875,'demet','maydanoz'),'1 demet maydanoz · %20 kadarı');
+  assert.equal(render(0.35,'paket','lazanya yaprağı'),'1 paket lazanya yaprağı · üçte biri kadarı');
+  assert.equal(render(1.35,'paket','lazanya yaprağı'),'2 paket lazanya yaprağı · 1 paket ve üçte biri kadarı');
   assert.equal(render(0.5,'kilogram','patates'),'500 gram patates');
-  assert.equal(render(166.67,'gram','kıyma'),'yaklaşık 165 gram kıyma');
+  assert.equal(render(166.67,'gram','kıyma'),'165 gram kıyma');
   assert.equal(s.eval('ingredientText({amount:[4,5],unit:"adet",name:"tavuk pirzola"},{yieldPeople:6},2)'),'2 adet tavuk pirzola');
-  assert.equal(s.eval('ingredientText({amount:[2,3],unit:"su bardağı",name:"su"},{yieldPeople:4},2)'),'yaklaşık 200–300 ml su');
+  assert.equal(s.eval('ingredientText({amount:[2,3],unit:"su bardağı",name:"su"},{yieldPeople:4},2)'),'200–300 ml su');
   assert.equal(render(0.25,'litre','tavuk suyu'),'250 mililitre tavuk suyu');
-  assert.equal(s.eval('ingredientText({amount:2,unit:"adet",name:"patates"},{yieldPeople:7},8)'),"3 adet patates al · yaklaşık 2 adet ve birinin çeyreğini kullan");
-  assert.equal(s.eval('ingredientText({amount:1,unit:"kase",name:"bezelye"},{yieldPeople:7},8)'),'yaklaşık 1 kase bezelye');
-  assert.equal(s.eval('ingredientText({amount:1,unit:"tatlı kaşığı",name:"kekik"},{yieldPeople:7},8)'),'yaklaşık 2,5 çay kaşığı kekik');
-  assert.equal(s.eval('ingredientText({amount:.25,unit:"çay bardağı",name:"yağ"},{yieldPeople:7},8)'),'yaklaşık 30 ml yağ');
+  assert.equal(s.eval('ingredientText({amount:2,unit:"adet",name:"patates"},{yieldPeople:7},8)'),'3 adet patates · 2 adet ve çeyreği kadarı');
+  assert.equal(s.eval('ingredientText({amount:1,unit:"kase",name:"bezelye"},{yieldPeople:7},8)'),'1 kase bezelye');
+  assert.equal(s.eval('ingredientText({amount:1,unit:"tatlı kaşığı",name:"kekik"},{yieldPeople:7},8)'),'2,5 çay kaşığı kekik');
+  assert.equal(s.eval('ingredientText({amount:.25,unit:"çay bardağı",name:"yağ"},{yieldPeople:7},8)'),'30 ml yağ');
+  // Every sourced line, at every headcount, stays free of both traps.
+  for (const recipe of meals.filter(m => m.status === 'sourced')) for (let count=1; count<=8; count++) for (const item of recipe.ingredients) {
+    const text = s.eval(`ingredientText(${JSON.stringify(item)},${JSON.stringify({yieldPeople:recipe.yieldPeople})},${count})`);
+    // The malzeme adı itself may quote the source ("kaynakta yaklaşık 2 kg");
+    // what must stay clean is the measurement the app prints around it.
+    const measure = text.replace(typeof item === 'string' ? item : item.name,'');
+    assert(!measure.includes('/'),`${recipe.id}, ${count} kişi: satirda egik cizgi: ${text}`);
+    assert(!measure.includes('yaklaşık'),`${recipe.id}, ${count} kişi: satirda yaklasik: ${text}`);
+  }
 });
 test('Every sourced ingredient stays readable for one through eight people', () => {
   const s=setup();
@@ -366,7 +386,9 @@ test('Homemade hamburger includes proofing and patty rest in its selectable tota
   assert(!matchesMeal(hamburger,{people:2,mode:'Tümü',maxTime:30,calorie:'any',includeIdeas:false}));
 });
 test('Unknown cards and exported text never print fabricated numbers', () => {
-  const s=setup();s.eval('showMeal(byId.get("meal-11"))');
+  // Doğrulanmamış fikir örneği: meal-11 10. pakette yayına alındığı için
+  // hâlâ fikir olan bir kayda (Margarita Pizza) geçildi.
+  const s=setup();s.eval('showMeal(byId.get("meal-166"))');
   assert.equal(s.elements.mealTime.textContent,'Doğrulanmadı');assert.equal(s.elements.perCal.textContent,'Bilinmiyor');assert.equal(s.elements.ingredients.children.length,0);
   const text = () => s.eval('shareBlocks(current,2).map(b => b.text).join(" ")');
   assert(text().includes('doğrulanmadı'));
@@ -542,5 +564,87 @@ test('Spin always scrolls the meal card into view; "Başka yemek" only when it d
   s.elements.mealCard.rect = {top: 0, bottom: 0, left: 0, right: 400};
   s.elements.spin.click();
   assert.equal(s.elements.mealCard.scrolledIntoView, 3);
+});
+test('Tenth package: the catalog carries exactly what the package file recorded', () => {
+  // research/package-10.cjs is the written record of what was read off each
+  // source page. If the catalog and the record drift apart, one of them was
+  // edited by hand and the provenance claim stops being true.
+  const pkg = require('../research/package-10.cjs');
+  // The catalog is evaluated in a separate vm realm, so its objects have a
+  // different prototype; compare by value with a key-order-independent dump.
+  const stable = value => JSON.stringify(value, (key,inner) => inner && !Array.isArray(inner) && typeof inner === 'object'
+    ? Object.fromEntries(Object.keys(inner).sort().map(k => [k,inner[k]])) : inner);
+  for(const row of [...pkg.applied,...pkg.fixes]) {
+    const live = meals.find(m => m.id === row.id);
+    assert(live,'Katalogda kayit yok: '+row.id);
+    for(const [key,value] of Object.entries(row)) {
+      assert.equal(stable(live[key]),stable(value),`${row.id}.${key} katalogda paket dosyasindan farkli`);
+    }
+  }
+  // Twelve recipes went live: five staged in package 8 plus seven sourced now.
+  assert.equal(pkg.applied.length,12);
+  for(const row of pkg.applied) {
+    const live = meals.find(m => m.id === row.id);
+    assert.equal(live.status,'sourced',row.id+' sourced olmali');
+    assert(live.source&&live.source.startsWith('https://'),row.id+' kaynak baglantisi yok');
+    assert(live.checkedAt,row.id+' checkedAt yok');
+    assert(Number.isFinite(live.yieldPeople)&&live.yieldPeople>0,row.id+' kisi sayisi yok');
+    assert(/kişilik/.test(live.yieldLabel),row.id+' porsiyonu kisi cinsinden degil: '+live.yieldLabel);
+    assert(live.cal===null||live.cal>0,row.id+' kalori yer tutucu');
+    assert(live.ingredients.length>0,row.id+' malzemesiz');
+    if(live.extraPrep) assert(live.waitLabel,row.id+' extraPrep true ama bekleme aciklamasi yok');
+  }
+  // The three sources that printed no usable per-person calorie carry none.
+  for(const id of ['meal-180','meal-184','meal-233','meal-236','meal-237','meal-223']) {
+    assert.equal(meals.find(m => m.id === id).cal,null,id+' kaynak kisi basi kalori vermiyordu');
+  }
+  assert.equal(meals.find(m => m.id === 'meal-174').cal,339);
+  // Chia pudding's two-hour fridge rest is not in the source's 5 minutes, so
+  // it stays out of every finite time filter even though time is a number.
+  const chia = meals.find(m => m.id === 'meal-236');
+  assert.equal(chia.time,5); assert.equal(chia.extraPrep,true); assert(/2 saat/.test(chia.waitLabel));
+  assert(!matchesMeal(chia,{maxTime:240,people:2,calorie:'any'}));
+  assert(matchesMeal(chia,{maxTime:Infinity,people:2,calorie:'any'}));
+  // The two weak categories are the reason this package exists.
+  const share = mode => meals.filter(m => m.mode === mode && m.status === 'sourced').length;
+  assert.equal(share('Kahvaltı'),15); assert.equal(share('Fast Food / Kaçamak'),15);
+});
+test('Piece-count yields are converted to people out loud, never counted as people', () => {
+  // "10 adet" was being read as "10 kişilik": a tray of stuffed vegetables
+  // fed ten people on paper, so per-person calories and amounts came out at
+  // roughly half. The sources give no headcount, so the assumption that
+  // converts pieces to people is written on the card itself.
+  for(const id of ['meal-110','meal-111','meal-112']) {
+    const m = meals.find(x => x.id === id);
+    const pieces = Number(m.yieldLabel.match(/^(\d+) adet/)[1]);
+    assert.equal(m.yieldPeople,pieces/2,id+' kisi sayisi adet/2 degil');
+    assert(/kişi başı 2 adet/.test(m.yieldLabel),id+' varsayim etiketinde yazmiyor');
+    assert(/kişi başı 2 dolma varsayıldı/.test(m.note),id+' varsayim notta yazmiyor');
+    // A pot of stuffed vegetables does not scale past its own capacity.
+    assert.equal(m.batchLimited,true,id+' tencere kapasitesi isaretlenmemis');
+    // None of the three sources tied its calorie figure to a person.
+    assert.equal(m.cal,null,id+' kalori kaynakta kisi basi degil');
+  }
+  // Lahmacun set this precedent and must keep it.
+  assert.equal(meal(10).yieldPeople,5);
+  // Every other sourced record either states people or is one piece per person.
+  const suspicious = meals.filter(m => m.status === 'sourced' && m.yieldLabel
+    && !/kişi/.test(m.yieldLabel) && !/^(\d+) (adet|porsiyon|kase|tabaklık)/.test(m.yieldLabel));
+  assert.equal(suspicious.length,0,'porsiyonu kisiye cevrilmemis kayit: '+suspicious.map(m => `${m.id} (${m.yieldLabel})`).join(', '));
+});
+test('A person range in the source becomes its upper bound, never an invented middle', () => {
+  // yieldPeople answers "how many people can this batch feed at most", which
+  // is what the time filter checks against (people > yieldPeople hides the
+  // card). Taking the lower end hid recipes the source says it can feed;
+  // taking the middle (4–6 → 5) printed a number no source ever gave.
+  const ranged = meals.filter(m => m.status === 'sourced' && /^\d+\s*[-–]\s*\d+ kişilik/.test(m.yieldLabel || ''));
+  assert(ranged.length >= 8,'aralikli kayit sayisi beklenenden az: '+ranged.length);
+  for(const m of ranged) {
+    const upper = Number(m.yieldLabel.match(/[-–]\s*(\d+) kişilik/)[1]);
+    assert.equal(m.yieldPeople,upper,`${m.id} aralik ust siniri ${upper} degil ${m.yieldPeople}`);
+  }
+  // A "1-2 kişilik" breakfast has to survive the default two-person search.
+  const toast = meals.find(m => m.id === 'meal-233');
+  assert(matchesMeal(toast,{maxTime:60,people:2,calorie:'any'}));
 });
 (async()=>{for(const t of tests){await t.run();console.log('PASS',t.name);}console.log(`${tests.length} tests passed; browser rendering and native device APIs NOT tested.`);})().catch(error=>{console.error(error);process.exitCode=1;});

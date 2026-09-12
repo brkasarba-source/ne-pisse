@@ -59,16 +59,21 @@ function gcd(a, b) {
   while (b) [a, b] = [b, a % b];
   return a;
 }
+// “3/4 çay kaşığı” is read as “3 or 4 teaspoons” at list size on a phone, so
+// no measurement line prints a slash: familiar fractions are spelled out the
+// way a kitchen says them, and everything else falls back to a decimal comma.
+const fractionWords = [[1/4,'çeyrek'],[1/3,'üçte bir'],[1/2,'yarım'],[2/3,'üçte iki'],[3/4,'dörtte üç']];
+function familiarFraction(value) {
+  const match = fractionWords.find(([size]) => Math.abs(value - size) < 0.011);
+  return match ? match[1] : null;
+}
 function friendlyNumber(value) {
   const rounded = Math.round(value);
   if (Math.abs(value - rounded) < 0.001) return String(rounded);
   // Mixed fractions such as “1 1/2” are hard to scan on a phone. Use a
   // decimal comma above one; reserve familiar fractions for values below one.
   if (value >= 1) return value.toLocaleString('tr-TR',{maximumFractionDigits:2});
-  const familiar = [[1,4],[1,3],[1,2],[2,3],[3,4]];
-  const match = familiar.find(([n,d]) => Math.abs(value - n/d) < 0.011);
-  if (match) return `${match[0]}/${match[1]}`;
-  return value.toLocaleString('tr-TR',{maximumFractionDigits:2});
+  return familiarFraction(value) || value.toLocaleString('tr-TR',{maximumFractionDigits:2});
 }
 function splitMeasure(value, unit, smallerUnit, factor) {
   const whole = Math.floor(value + 0.001);
@@ -91,69 +96,72 @@ function practicalAmount(value, unit, name) {
   }
   if (unit.endsWith('tatlı kaşığı')) {
     if (Math.abs(value - Math.round(value)) < 0.011) return `${Math.round(value)} ${unit} ${name}`;
-    const teaspoons = Math.max(0.25, Math.round(value * 2 * 2) / 2);
-    return `yaklaşık ${friendlyNumber(teaspoons)} çay kaşığı ${name}`;
+    return practicalAmount(value * 2, 'çay kaşığı', name);
   }
   if (unit.endsWith('çay kaşığı')) {
+    // Below a quarter teaspoon nobody reaches for a spoon; a pinch is both the
+    // honest measure and the word a kitchen uses. Never for a liquid.
+    if (value < 0.25 && !pourable(name)) return `bir tutam ${name}`;
     const step = value >= 1 ? 2 : 4;
-    const usable = Math.max(0.25, Math.round(value * step) / step);
-    const prefix = Math.abs(usable - value) > 0.001 ? 'yaklaşık ' : '';
-    return `${prefix}${friendlyNumber(usable)} ${unit} ${name}`;
+    return `${friendlyNumber(Math.max(0.25, Math.round(value * step) / step))} ${unit} ${name}`;
   }
   if (unit === 'gram' || unit === 'mililitre') {
-    const usable = value >= 20 ? Math.round(value / 5) * 5 : Math.round(value);
-    const prefix = Math.abs(usable - value) > 0.001 ? 'yaklaşık ' : '';
-    return `${prefix}${usable} ${unit} ${name}`;
+    return `${value >= 20 ? Math.round(value / 5) * 5 : Math.round(value)} ${unit} ${name}`;
   }
   if (unit === 'su bardağı' && Math.abs(value - Math.round(value)) > 0.001) {
     const millilitres = Math.round(value * 200 / 5) * 5;
-    const familiar = friendlyNumber(value);
-    return familiar.includes('/') ? `${familiar} ${unit} ${name} (yaklaşık ${millilitres} ml)` : `yaklaşık ${millilitres} ml ${name}`;
+    const familiar = familiarFraction(value);
+    return familiar ? `${familiar} ${unit} ${name} (${millilitres} ml)` : `${millilitres} ml ${name}`;
   }
   if (unit === 'çay bardağı' && Math.abs(value - Math.round(value)) > 0.001) {
     const millilitres = Math.max(5, Math.round(value * 100 / 5) * 5);
-    return `yaklaşık ${millilitres} ml ${name}`;
+    const familiar = familiarFraction(value);
+    return familiar ? `${familiar} ${unit} ${name} (${millilitres} ml)` : `${millilitres} ml ${name}`;
   }
   if (['kase','fincan','kahve fincanı','büyük su bardağı'].includes(unit) && Math.abs(value - Math.round(value)) > 0.001) {
     const nearest = Math.round(value);
-    if (nearest >= 1 && Math.abs(value - nearest) <= 0.15) return `yaklaşık ${nearest} ${unit} ${name}`;
-    if (value < 1) {
-      const quarter = Math.max(.25, Math.round(value*4)/4);
-      return `yaklaşık ${friendlyNumber(quarter)} ${unit} ${name}`;
-    }
+    if (nearest >= 1 && Math.abs(value - nearest) <= 0.15) return `${nearest} ${unit} ${name}`;
+    if (value < 1) return `${friendlyNumber(Math.max(.25, Math.round(value*4)/4))} ${unit} ${name}`;
     const whole = Math.floor(value), remainder = value - whole;
     const fraction = remainder < .38 ? 'çeyrek' : remainder < .63 ? 'yarım' : 'dörtte üç';
-    return `${whole} ${unit} + yaklaşık ${fraction} ${unit} ${name}`;
+    return `${whole} ${unit} + ${fraction} ${unit} ${name}`;
   }
   const countable = ['adet','diş','dal','yaprak','dilim','parça'].includes(unit);
   if (countable && Math.abs(value - Math.round(value)) > 0.001) {
+    // Buy a whole one, use part of it. The line is a shopping row with a
+    // checkbox in front of it, so “al” is implied and the share is enough.
     const shopping = Math.ceil(value);
-    let usage;
-    if (value < 1) {
-      const fractions = [[.25,'dörtte birini'],[1/3,'1/3’ünü'],[.5,'yarısını'],[2/3,'2/3’ünü'],[.75,'dörtte üçünü'],[1,'tamamını']];
-      const nearest = fractions.reduce((best, candidate) => Math.abs(candidate[0]-value) < Math.abs(best[0]-value) ? candidate : best);
-      usage = value < .25 ? `%${Math.max(1, Math.round(value*100))}’ini` : nearest[1];
-    }
-    else {
-      const rounded = Math.round(value * 4) / 4, whole = Math.floor(rounded), remainder = rounded - whole;
-      const fraction = remainder < .125 ? '' : remainder < .375 ? ' ve çeyreğini' : remainder < .625 ? ' ve yarısını' : remainder < .875 ? ' ve dörtte üçünü' : '';
-      usage = `${whole} ${unit}${fraction ? fraction.replace(' ve ', ' ve birinin ') : ''} kullan`;
-    }
-    return `${shopping} ${unit} ${name} al · yaklaşık ${usage}${value < 1 ? ' kullan' : ''}`;
+    if (value < 1) return `${shopping} ${unit} ${name} · ${shareText(value)} kadarı`;
+    const rounded = Math.round(value * 4) / 4, whole = Math.floor(rounded), remainder = rounded - whole;
+    const fraction = remainder < .125 ? '' : remainder < .375 ? ' ve çeyreği' : remainder < .625 ? ' ve yarısı' : remainder < .875 ? ' ve dörtte üçü' : '';
+    return `${shopping} ${unit} ${name} · ${whole} ${unit}${fraction} kadarı`;
   }
-  const packaged = ['paket','kavanoz','konserve','kutu'].includes(unit) || unit.endsWith('demet');
+  const packaged = ['paket','kavanoz','konserve','kutu','şişe'].includes(unit) || unit.endsWith('demet');
   if (packaged && Math.abs(value - Math.round(value)) > 0.001) {
-    const shopping = Math.ceil(value), whole = Math.floor(value), percent = Math.max(5, Math.round((value-whole) * 100 / 5) * 5);
-    const usage = value < 1 ? `yaklaşık %${percent}'sini` : `${whole} ${unit} ve kalan paketin yaklaşık %${percent}'sini`;
-    return `${shopping} ${unit} ${name} al · ${usage} kullan`;
+    const shopping = Math.ceil(value), whole = Math.floor(value);
+    const share = value < 1 ? shareText(value) : `${whole} ${unit} ve ${shareText(value - whole)}`;
+    return `${shopping} ${unit} ${name} · ${share} kadarı`;
   }
   const formatted = friendlyNumber(value);
   if (/\d+,\d{2,}/.test(formatted)) {
     const whole = Math.floor(value), percent = Math.round((value-whole)*100);
-    return `yaklaşık ${whole ? `${whole} ${unit} + ` : ''}1 ${unit} ${name} ölçüsünün %${percent} kadarı`;
+    return `${whole ? `${whole} ${unit} + ` : ''}1 ${unit} ${name} ölçüsünün %${percent} kadarı`;
   }
   return `${formatted} ${unit} ${name}`;
 }
+// How much of the bought item actually goes in: a kitchen fraction when one
+// fits, a percentage when it does not. No apostrophes, no slashes.
+function shareText(value) {
+  const shares = [[.25,'çeyreği'],[1/3,'üçte biri'],[.5,'yarısı'],[2/3,'üçte ikisi'],[.75,'dörtte üçü']];
+  const nearest = shares.reduce((best, candidate) => Math.abs(candidate[0]-value) < Math.abs(best[0]-value) ? candidate : best);
+  // A percentage to the nearest 5 is as precise as eyeballing half a packet
+  // can be; “%19” would claim an accuracy the shopper cannot act on.
+  return Math.abs(nearest[0]-value) <= 0.06 ? nearest[1] : `%${Math.max(5, Math.round(value*100/5)*5)}`;
+}
+const pourable = name => /yağ|su|süt|sirke|limon suyu|sos|şurup|krema|ayran|yoğurt|salça|bal\b/i.test(name);
+// The hedge is said once, under the list, instead of “yaklaşık” on every line:
+// a shopping list that qualifies each row reads like a calculation printout.
+const ROUNDING_NOTE = count => `${count} kişi için kaynak ölçüleri orantılandı, en yakın mutfak ölçüsüne yuvarlandı. Adetli ürünlerde alınacak miktar ile kullanılacak pay ayrı yazıyor.`;
 function ingredientText(item, m, count=people) {
   if (typeof item === 'string') return item;
   let unit = item.unit;
@@ -165,11 +173,11 @@ function ingredientText(item, m, count=people) {
     }
     if (unit === 'su bardağı') {
       const millilitres = scaled.map(value => Math.round(value * 200 / 5) * 5);
-      return `yaklaşık ${millilitres.join('–')} ml ${item.name}`;
+      return `${millilitres.join('–')} ml ${item.name}`;
     }
     if (unit === 'çay kaşığı') {
       const usable = scaled.map(value => Math.max(0.25, Math.round(value * (value >= 1 ? 2 : 4)) / (value >= 1 ? 2 : 4)));
-      return `yaklaşık ${usable.map(friendlyNumber).join('–')} ${unit} ${item.name}`;
+      return `${usable.map(friendlyNumber).join('–')} ${unit} ${item.name}`;
     }
     return `${scaled.map(value => friendlyNumber(value)).join('–')} ${unit} ${item.name}`;
   }
@@ -187,7 +195,7 @@ function refreshIngredientAmounts() {
     span.textContent = name;
     input.setAttribute('aria-label', `${name} alındı`);
   });
-  if (current.ingredients.length) $('#ingredientsNote').textContent = `${people} kişi için kaynak oranı korundu; ekranda uygulanabilir mutfak ölçüsüne çevrildi. Adetli ürünlerde alınacak miktar ve kullanılacak pay ayrı gösterilir.`;
+  if (current.ingredients.length) $('#ingredientsNote').textContent = ROUNDING_NOTE(people);
 }
 function renderMetrics() {
   if (!current) return;
@@ -239,7 +247,7 @@ function showMeal(m) {
     input.type = 'checkbox'; input.setAttribute('aria-label', `${name} alındı`); span.textContent = name;
     label.append(input, span); li.append(label); $('#ingredients').append(li);
   }
-  $('#ingredientsNote').textContent = m.ingredients.length ? `${people} kişi için kaynak ölçülerinden orantılandı. Adet olarak bölünemeyen ürünleri alışverişte yukarı yuvarlayabilirsiniz.` : 'Doğrulanmış malzeme listesi yok; yanlış yönlendirmemek için gösterilmiyor.';
+  $('#ingredientsNote').textContent = m.ingredients.length ? ROUNDING_NOTE(people) : 'Doğrulanmış malzeme listesi yok; yanlış yönlendirmemek için gösterilmiyor.';
   renderMetrics(); renderHeart(); updateStatus();
 }
 $('#sourceLink').onclick = event => {
@@ -298,7 +306,7 @@ function renderShopping() {
     }
   }
   const names = groups.map(g => g.recipe.name);
-  $('#ingredientsNote').textContent = `${people} kişi için: ${names.join(' + ')}. ${names.length > 1 ? 'Her tarifin malzemesi kendi başlığı altında ayrı listelenir; tarifler arasında toplama yapılmaz.' : 'Aynı ad ve birimdeki malzemeler toplandı.'} Seçilmemiş öneriler dahil değil; miktarı olmayan malzemeler ölçüsüz gösterilir. Üstteki süre ve kalori yalnızca ana tarifindir.`;
+  $('#ingredientsNote').textContent = `${people} kişi için: ${names.join(' + ')}. ${names.length > 1 ? 'Her tarifin malzemesi kendi başlığı altında ayrı listelenir; tarifler arasında toplama yapılmaz.' : 'Aynı ad ve birimdeki malzemeler toplandı.'} Ölçüler en yakın mutfak ölçüsüne yuvarlandı; miktarı olmayan malzemeler ölçüsüz gösterilir. Üstteki süre ve kalori yalnızca ana tarifindir.`;
 }
 function renderMenu() {
   const pairing = current && menuPairings[current.id];

@@ -2,6 +2,11 @@
 
 Son güncelleme: 2026-09-08
 
+> **Bu dosya 8 Eylül'de dondu.** Sonraki paketlerde onlarca kayıt fikirden kaynaklıya
+> geçti; aşağıdaki tablo o değişiklikleri içermiyor, yani "yalnızca doğrulanmamış fikir"
+> satırlarının bir kısmı artık doğru değil. Güncel durum için `README.md` ve
+> `dist/catalog.js` esastır; bu dosya o tarihteki yapısal denetimin kaydıdır.
+
 ## Sonuç
 
 Eski 238 kaydın tamamı yapısal olarak incelendi. Tam gastronomik doğrulama **tamamlanmadı**. Eski kategori bazlı süre, kalori, eşlikçi menü ve malzeme üretimi kaldırıldı. 233 aktif fikirden 95'i belirli bir kaynak tarifle eşleştirildi; 138 fikir doğrulanmayı bekliyor. Kaynak eşleşmesi, tarifin mutfakta tarafımızdan denendiği anlamına gelmez.
